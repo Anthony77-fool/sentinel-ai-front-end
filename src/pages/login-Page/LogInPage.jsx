@@ -1,3 +1,5 @@
+import { FcGoogle } from "react-icons/fc";
+
 export function LogInPage() {
   return (
     /* 1. GLOBAL WRAPPER: Fixed 100vh height and hidden horizontal overflow */
@@ -22,18 +24,27 @@ export function LogInPage() {
           <div className="max-w-md w-full pt-14 xl:pt-0">
             
             {/* 1. LOGO & HEADER: Matching the Sleeknote layout */}
-            <div className="text-center mb-10">
+            <div className="flex flex-col justify-center items-center mb-10">
               <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-xl mb-6 shadow-md">
                 {/* Using your 'S' logo concept with updated colors */}
                 <span className="text-white font-bold text-2xl tracking-tighter">S</span>
               </div>
-              <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Welcome Back</h1>
+              <h1 className="text-4xl font-medium text-slate-700 inline-block tracking-wide">
+                Welcome Back
+              </h1>
             </div>
 
             {/* 2. GOOGLE LOGIN: White background, subtle border like the sample */}
-            <button className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all mb-8 shadow-sm">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/smartlock/google.svg" className="w-5 h-5" alt="Google" />
-              Log in with Google
+            <button className="relative w-full flex items-center justify-center bg-white border border-slate-200 rounded-lg px-4 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all mb-8 shadow-sm cursor-pointer group">
+  
+              {/* Icon positioned at the start (left) */}
+              <div className="absolute left-4 flex items-center text-xl">
+                <FcGoogle />
+              </div>
+
+              {/* Centered Text */}
+              <span>Log in with Google</span>
+              
             </button>
 
             {/* 3. DIVIDER */}
@@ -77,10 +88,14 @@ export function LogInPage() {
               {/* 5. SUBMIT BUTTON: Matching the indigo/violet tone from Sleeknote */}
               <button 
                 type="submit" 
-                className="w-full bg-indigo-600 text-white font-bold py-4 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 group shadow-lg shadow-indigo-200 mt-4"
+                className="w-full bg-indigo-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-between group shadow-lg shadow-indigo-200 mt-4 cursor-pointer"
               >
-                Log in
-                <span className="group-hover:translate-x-1 transition-transform opacity-70">→</span>
+                {/* Empty span to balance the flex-spacing so 'Log in' stays centered */}
+                <span className="w-5"></span> 
+                
+                <span>Log in</span>
+                
+                <span className="w-5 group-hover:translate-x-1 transition-transform opacity-70 text-xl">→</span>
               </button>
             </form>
 
