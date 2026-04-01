@@ -1,7 +1,7 @@
 import { FcGoogle } from "react-icons/fc";
 import React from 'react';
 
-export default function SignUpPage() {
+export default function SignUpPage1() {
   return (
     // min-h-screen ensures it covers the viewport even if content is short
     // lg:h-screen locks it to 100vh on desktop
@@ -109,7 +109,7 @@ export default function SignUpPage() {
 
           {/* Login Footer */}
           <p className="text-center mt-6 lg:mt-8 text-gray-600 font-medium">
-            Already have an account? <button className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1 cursor-pointer">Login</button>
+            Already have an account? <a href="/login" className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1 cursor-pointer">Login</a>
           </p>
         </div>
       </div>

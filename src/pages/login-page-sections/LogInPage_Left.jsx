@@ -1,4 +1,5 @@
 import { FcGoogle } from "react-icons/fc";
+import { Link } from "react-router-dom";
 
 export function LogInPage_Left(){
 
@@ -11,7 +12,7 @@ export function LogInPage_Left(){
           
           {/* 1. LOGO & HEADER: Matching the Sleeknote layout */}
           <div className="flex flex-col justify-center items-center mb-10">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-xl mb-6 shadow-md">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#89A1EF] rounded-xl mb-6 shadow-md">
               {/* Using your 'S' logo concept with updated colors */}
               <span className="text-white font-bold text-2xl tracking-tighter">S</span>
             </div>
@@ -68,13 +69,18 @@ export function LogInPage_Left(){
                 <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
                 Keep me logged in
               </label>
-              <a href="/forgotpassword" className="text-pink-500 font-semibold hover:text-pink-600 transition-colors">Forgot your password?</a>
+              <Link 
+                to="/forgotpassword" 
+                className="text-[#89A1EF] font-semibold hover:text-[#6282eb] transition-all"
+              >
+                Forgot your password?
+              </Link>
             </div>
 
             {/* 5. SUBMIT BUTTON: Matching the indigo/violet tone from Sleeknote */}
             <button 
               type="submit" 
-              className="w-full bg-indigo-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-indigo-700 transition-all flex items-center justify-between group shadow-lg shadow-indigo-200 mt-4 cursor-pointer"
+              className="w-full bg-[#89A1EF] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#768bd9] transition-all flex items-center justify-between group shadow-lg shadow-indigo-200 mt-4 cursor-pointer"
             >
               {/* Empty span to balance the flex-spacing so 'Log in' stays centered */}
               <span className="w-5"></span> 
@@ -87,7 +93,12 @@ export function LogInPage_Left(){
 
           <p className="text-center mt-12 text-sm text-slate-500">
             Don't have an account? 
-            <a href="/signup" className="text-pink-500 font-bold hover:text-pink-600 ml-1">Sign up</a>
+            <Link 
+              to="/signup" 
+              className="text-[#89A1EF] font-bold hover:text-[#6282eb] transition-all ml-1"
+            >
+              Sign up
+            </Link>
           </p>
 
         </div>
