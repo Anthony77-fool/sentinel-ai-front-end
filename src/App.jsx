@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
-import { LogInPage } from './pages/login-Page/LogInPage';
+import { LogInPage } from './pages/LogInPage';
 import './App.css'
 
 function App() {
