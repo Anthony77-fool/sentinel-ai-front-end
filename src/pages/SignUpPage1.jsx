@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import React from 'react';
 
@@ -109,7 +110,7 @@ export default function SignUpPage1() {
 
           {/* Login Footer */}
           <p className="text-center mt-6 lg:mt-8 text-gray-600 font-medium">
-            Already have an account? <a href="/login" className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1 cursor-pointer">Login</a>
+            Already have an account? <Link to="/login" className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1 cursor-pointer">Login</Link>
           </p>
         </div>
       </div>

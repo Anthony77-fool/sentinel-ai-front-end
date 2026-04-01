@@ -51,7 +51,7 @@ export function LogInPage_Left(){
               <input 
                 type="email" 
                 placeholder="Email Address" 
-                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
+                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-[#89A1EF] focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
               />
             </div>
 
@@ -60,7 +60,7 @@ export function LogInPage_Left(){
               <input 
                 type="password" 
                 placeholder="Password" 
-                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
+                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-[#89A1EF] focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
               />
             </div>
 
