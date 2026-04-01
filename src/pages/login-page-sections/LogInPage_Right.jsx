@@ -8,7 +8,7 @@ export function LogInPage_Right(){
       {/* BACKGROUND IMAGE LAYER (Global) */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="/imgs/beauty-digital-art-through-immersive-experiences.jpg" 
+          src="/imgs/LogInPage-img-hero.webp" 
           alt="Futuristic Background"
           className="w-full h-full object-cover object-center"
         />
@@ -25,7 +25,7 @@ export function LogInPage_Right(){
             {/* Sharp version of image inside the card */}
             <div className="absolute inset-0 z-0">
               <img 
-                src="/imgs/beauty-digital-art-through-immersive-experiences.jpg" 
+                src="/imgs/LogInPage-img-hero.webp" 
                 alt="SentinelAI Identity"
                 className="w-full h-full object-cover object-center"
               />

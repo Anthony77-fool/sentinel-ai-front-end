@@ -68,7 +68,7 @@ export function LogInPage_Left(){
                 <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
                 Keep me logged in
               </label>
-              <a href="#" className="text-pink-500 font-semibold hover:text-pink-600 transition-colors">Forgot your password?</a>
+              <a href="/forgotpassword" className="text-pink-500 font-semibold hover:text-pink-600 transition-colors">Forgot your password?</a>
             </div>
 
             {/* 5. SUBMIT BUTTON: Matching the indigo/violet tone from Sleeknote */}
@@ -87,7 +87,7 @@ export function LogInPage_Left(){
 
           <p className="text-center mt-12 text-sm text-slate-500">
             Don't have an account? 
-            <a href="#" className="text-pink-500 font-bold hover:text-pink-600 ml-1">Sign up</a>
+            <a href="/signup" className="text-pink-500 font-bold hover:text-pink-600 ml-1">Sign up</a>
           </p>
 
         </div>
