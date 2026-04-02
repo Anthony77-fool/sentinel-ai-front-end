@@ -1,10 +1,15 @@
+import React from 'react';
+import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineEmail } from "react-icons/md";
-import React from 'react';
-import { motion } from "framer-motion";
 
 export default function SignUpPage1() {
+
+  // 1. Create the state (defaulting to 'employee')
+  const [role, setRole] = useState("employee");
+
   return (
     // min-h-screen ensures it covers the viewport even if content is short
     // lg:h-screen locks it to 100vh on desktop
@@ -64,37 +69,82 @@ export default function SignUpPage1() {
           <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Securely identifying your account</p>
 
           <form className="space-y-4">
-
             {/* Email Input */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
                 <MdOutlineEmail className="w-5 h-5" />
               </span>
-              <input 
-                type="email" 
-                placeholder="Email"
-                className="w-full pl-11 pr-4 py-3.5 lg:py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all"
+              <input type="email" placeholder="Email" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+            </div>
+
+            {/* Password Input */}
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 11-8 0v4h8z" /></svg>
+              </span>
+              <input type="password" placeholder="Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+            </div>
+
+            {/* Name Group (Two columns on larger screens) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </span>
+                <input type="text" placeholder="First Name" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              </div>
+
+              <div className="relative">
+                <input type="text" placeholder="Last Name" className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              </div>
+            </div>
+
+            {/* Role Toggle (Segmented Control) */}
+            <div className="relative p-1 bg-gray-100 rounded-xl flex items-center mt-2 w-full">
+      
+              {/* 2. The Animated Background Slider */}
+              <motion.div
+                animate={{
+                  x: role === "employee" ? 0 : "100%",
+                }}
+                transition={{ 
+                  duration: 0.3, // Lower is faster (0.1 is instant, 1.0 is slow)
+                  ease: "easeInOut" 
+                }}
+                className="absolute h-[calc(100%-8px)] bg-white rounded-lg shadow-sm z-0"
               />
+
+              {/* 3. The Buttons */}
+              <button
+                type="button"
+                onClick={() => setRole("employee")}
+                className={`cursor-pointer relative z-10 flex-1 py-2 text-sm font-semibold transition-colors duration-200 ${
+                  role === "employee" ? "text-slate-700" : "text-slate-400"
+                }`}
+              >
+                Employee
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRole("business_admin")}
+                className={`cursor-pointer relative z-10 flex-1 py-2 text-sm font-semibold transition-colors duration-200 ${
+                  role === "business_admin" ? "text-slate-700" : "text-slate-400"
+                }`}
+              >
+                Business Admin
+              </button>
+
+              {/* Hidden input to store the value for the form submission */}
+              <input type="hidden" name="role" value={role} />
             </div>
 
             {/* Submit Button */}
             <button className="group relative w-full bg-[#89A1EF] text-white font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center hover:bg-[#768bd9] active:scale-[0.98] transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
-  
-              {/* The Text stays centered because of the flex/justify-center on the parent */}
-              <span>Continue</span>            {/* Verify first then changed to continue */}
-
-              {/* The Icon is locked to the right side */}
+              <span>Continue</span>
               <div className="absolute right-6 flex items-center justify-center">
-                <svg 
-                  className="w-5 h-5 group-hover:translate-x-1 transition-transform" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </div>
-
             </button>
           </form>
 
