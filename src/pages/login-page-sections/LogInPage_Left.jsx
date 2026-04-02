@@ -94,7 +94,7 @@ export function LogInPage_Left(){
           <p className="text-center mt-12 text-sm text-slate-500">
             Don't have an account? 
             <Link 
-              to="/signup" 
+              to="/signup1" 
               className="text-[#89A1EF] font-bold hover:text-[#6282eb] transition-all ml-1"
             >
               Sign up

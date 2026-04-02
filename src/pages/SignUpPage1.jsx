@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
+import { MdOutlineEmail } from "react-icons/md";
 import React from 'react';
+import { motion } from "framer-motion";
 
 export default function SignUpPage1() {
   return (
@@ -20,14 +22,19 @@ export default function SignUpPage1() {
         
         {/* Content Overlay */}
         <div className="relative z-10">
-          <h1 className="text-3xl lg:text-5xl font-extrabold mb-2 lg:mb-4">Easy to Find Client</h1>
+          <h1 className="text-3xl lg:text-5xl font-extrabold mb-2 lg:mb-4">Secure Agentic Gateway</h1>
           <p className="text-base lg:text-xl font-light opacity-90 mb-6 lg:mb-10 max-w-md">
-            Find client from all around the world
+            Govern and protect your enterprise AI data
           </p>
           
           {/* Pagination Indicators - Hidden on small mobile to save space */}
           <div className="hidden sm:flex gap-2">
-            <div className="w-10 h-2 rounded-full bg-white"></div>
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: 40 }} // 40px is w-10
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="h-2 rounded-full bg-white"
+            />
             <div className="w-2 h-2 rounded-full bg-white opacity-40"></div>
             <div className="w-2 h-2 rounded-full bg-white opacity-40"></div>
           </div>
@@ -50,7 +57,8 @@ export default function SignUpPage1() {
             <p className="text-xs lg:text-sm text-[#5d6da2] font-medium uppercase tracking-wider">Governance</p>
           </div>
         </div>
-
+        
+        {/* Form Container */}
         <div className="max-w-md w-full mx-auto lg:mx-0">
           <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">Verify your email</h3>
           <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Ensuring you're really you</p>
@@ -60,7 +68,7 @@ export default function SignUpPage1() {
             {/* Email Input */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <MdOutlineEmail className="w-5 h-5" />
               </span>
               <input 
                 type="email" 
