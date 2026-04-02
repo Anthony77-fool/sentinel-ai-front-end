@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
-import { FcGoogle } from "react-icons/fc";
 import { MdOutlineEmail } from "react-icons/md";
+import { CiUnlock, CiLock  } from "react-icons/ci";
 import { Logo } from "../SignUp-reusables/Logo";
 
 export function SignUp2RightSide() {
@@ -21,8 +21,8 @@ export function SignUp2RightSide() {
         
         {/* Form Container */}
         <div className="max-w-md w-full mx-auto lg:mx-0">
-          <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">User Credentials</h3>
-          <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Securely identifying your account</p>
+          <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">Account Setup</h3>
+          <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Establishing your secure gateway access</p>
 
           <form className="space-y-4">
             {/* Email Input */}
@@ -35,24 +35,18 @@ export function SignUp2RightSide() {
 
             {/* Password Input */}
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 11-8 0v4h8z" /></svg>
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+                <CiUnlock className="w-5 h-5" />
               </span>
               <input type="password" placeholder="Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
             </div>
 
-            {/* Name Group (Two columns on larger screens) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                </span>
-                <input type="text" placeholder="First Name" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
-              </div>
-
-              <div className="relative">
-                <input type="text" placeholder="Last Name" className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
-              </div>
+            {/* Confirm Password Input */}
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+                <CiLock className="w-5 h-5" />
+              </span>
+              <input type="password" placeholder="Confirm Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
             </div>
 
             {/* Role Toggle (Segmented Control) */}
