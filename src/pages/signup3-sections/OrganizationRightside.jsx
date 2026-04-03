@@ -36,7 +36,7 @@ export function OrganizationRightside() {
           <footer className="mt-10 pb-6 text-center">
             <p className="text-gray-600 font-medium">
               Already have an account? 
-              <Link to="/login" className="text-[#89A1EF] font-bold hover:underline ml-1">Login</Link>
+              <Link to="/login" className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1">Login</Link>
             </p>
           </footer>
         </div>
