@@ -11,10 +11,17 @@ export function LogInPage_Left(){
         <div className="max-w-md w-full pt-14 xl:pt-0">
           
           {/* 1. LOGO & HEADER: Matching the Sleeknote layout */}
-          <div className="flex flex-col justify-center items-center mb-10">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-[#89A1EF] rounded-xl mb-6 shadow-md">
-              {/* Using your 'S' logo concept with updated colors */}
-              <span className="text-white font-bold text-2xl tracking-tighter">S</span>
+          <div className="flex flex-col justify-center items-center mb-5">
+            <div className="flex items-center gap-3 mb-8 lg:mb-0">
+              <div className="p-2 rounded-lg shrink-0">
+                  {/*Logo Picture here */}
+                  <img className="w-20 h-full lg:w-20 lg:h-full text-white" src="/imgs/SentinelAI_Logo.webp" alt="SentinelAI Logo" />
+                  
+              </div>
+              <div className="leading-tight">
+                <h2 className="font-bold text-lg lg:text-xl text-[#4b598a] inline-block tracking-tight">SentinelAI</h2>
+                <p className="text-xs lg:text-sm text-[#5d6da2] font-medium uppercase tracking-wider">Governance</p>
+              </div>
             </div>
             <h1 className="text-4xl font-medium text-slate-700 inline-block tracking-wide">
               Welcome Back
