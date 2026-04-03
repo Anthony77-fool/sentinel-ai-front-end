@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { IoBusinessOutline, IoCalendarOutline, IoLayersOutline } from "react-icons/io5";
+import { IoPersonOutline } from "react-icons/io5";
 import { MapControlsExample } from '../../components/MapControls';
 
 // Import Shadcn Select components (assuming they are in your ui folder)
@@ -22,9 +23,7 @@ export function Organization_Form() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+            <IoPersonOutline className="w-5 h-5" />
           </span>
           <input type="text" placeholder="First Name" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#89A1EF] outline-none transition-all" />
         </div>
