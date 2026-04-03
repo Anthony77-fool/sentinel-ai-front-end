@@ -79,7 +79,7 @@ export function Organization_Form() {
         <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1 block">
           Pin Location
         </label>
-        <div className="relative block w-full h-[350px] rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
+        <div className="relative block w-full h-[400px] rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
           <MapControlsExample onLocationSelect={setLocation} />
         </div>
       </div>

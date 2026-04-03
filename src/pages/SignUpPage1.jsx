@@ -16,7 +16,7 @@ export default function SignUpPage1() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/imgs/SignUpPage-img-hero.jpg')`,
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/imgs/SignUpPage-img-hero.webp')`,
           }}
         />
         
