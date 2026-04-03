@@ -66,18 +66,6 @@ export default function SignUpPage3_Employee() {
 
           <form className="space-y-4">
 
-            {/* Email Input */}
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                <MdOutlineEmail className="w-5 h-5" />
-              </span>
-              <input 
-                type="email" 
-                placeholder="Email"
-                className="w-full pl-11 pr-4 py-3.5 lg:py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all"
-              />
-            </div>
-
             {/* Name Group (Two columns on larger screens) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="relative">
