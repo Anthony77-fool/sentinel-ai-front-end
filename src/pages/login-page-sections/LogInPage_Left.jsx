@@ -77,8 +77,22 @@ export function LogInPage_Left(){
 
             <div className="flex items-center justify-between text-sm pt-1">
               <label className="flex items-center gap-2 text-slate-500 cursor-pointer hover:text-slate-700 transition-colors">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
-                Keep me logged in
+                <input 
+                  type="checkbox" 
+                  className="
+                    w-4 h-4 rounded 
+                    border border-slate-300 bg-white /* <--- Added border and bg-white */
+                    appearance-none 
+                    checked:bg-[#89A1EF] checked:border-[#89A1EF]
+                    focus:ring-2 focus:ring-[#89A1EF] focus:ring-offset-2
+                    cursor-pointer transition-all relative
+                    
+                    /* White checkmark SVG */
+                    checked:bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%223%22%20d%3D%22m6%2010%203%203%206-6%22%2F%3E%3C%2Fsvg%3E')]
+                    bg-center bg-no-repeat bg-[length:100%_100%]
+                  " 
+                />
+                Show Password
               </label>
               <Link 
                 to="/forgotpassword" 
