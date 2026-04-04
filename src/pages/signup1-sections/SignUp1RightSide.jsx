@@ -70,7 +70,7 @@ export function SignUp1RightSide() {
             </div>
 
             {/* Button Text */}
-            <span className="text-base lg:text-md">Sign Up with Google</span>
+            <span className="text-gray-500 lg:text-md">Sign Up with Google</span>
           </button>
 
           {/* Login Footer */}

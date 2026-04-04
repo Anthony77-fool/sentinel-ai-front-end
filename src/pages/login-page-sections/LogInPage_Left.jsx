@@ -1,5 +1,7 @@
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import { MdOutlineEmail } from "react-icons/md";
+import { CiUnlock, CiLock  } from "react-icons/ci";
 
 export function LogInPage_Left(){
 
@@ -53,22 +55,24 @@ export function LogInPage_Left(){
 
           {/* 4. FORM: Clean inputs with subtle borders and labels */}
           <form className="space-y-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700 ml-1">Email Address</label>
+            {/* Email Input */}
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                <MdOutlineEmail className="w-5 h-5" />
+              </span>
               <input 
                 type="email" 
-                placeholder="Email Address" 
-                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-[#89A1EF] focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
+                placeholder="Email"
+                className="w-full pl-11 pr-4 py-3.5 lg:py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700 ml-1">Password</label>
-              <input 
-                type="password" 
-                placeholder="Password" 
-                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 text-slate-900 rounded-lg focus:ring-2 focus:ring-[#89A1EF] focus:bg-white focus:border-transparent outline-none transition-all placeholder:text-slate-400" 
-              />
+            {/* Password Input */}
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+                <CiUnlock className="w-5 h-5" />
+              </span>
+              <input type="password" placeholder="Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
             </div>
 
             <div className="flex items-center justify-between text-sm pt-1">
