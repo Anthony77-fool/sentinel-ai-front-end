@@ -1,28 +1,76 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { 
+  IoGridOutline, 
+  IoSparklesOutline, 
+  IoPeopleOutline, 
+  IoShieldCheckmarkOutline, 
+  IoDocumentTextOutline, 
+  IoAlertCircleOutline, 
+  IoFingerPrintOutline,
+  IoPersonCircleOutline, 
+  IoSettingsOutline, 
+  IoLogOutOutline
+} from "react-icons/io5";
 
 const NAV_SECTIONS = [
   {
     label: "MAIN",
     items: [
-      { key: "dashboard",  label: "Dashboard",         active: true  },
-      { key: "ai-tools",   label: "AI Tools"                         },
+      { 
+        key: "dashboard", 
+        label: "Dashboard", 
+        icon: <IoGridOutline />, 
+        active: true 
+      },
+      { 
+        key: "ai-tools", 
+        label: "AI Tools", 
+        icon: <IoSparklesOutline /> 
+      },
     ],
   },
   {
     label: "USER MANAGEMENT",
     items: [
-      { key: "employees",  label: "Employees"                        },
-      { key: "approvals",  label: "Account Approvals", badge: 7      },
+      { 
+        key: "employees", 
+        label: "Employees", 
+        icon: <IoPeopleOutline /> 
+      },
+      { 
+        key: "approvals", 
+        label: "Account Approvals", 
+        badge: 7, 
+        icon: <IoShieldCheckmarkOutline /> 
+      },
     ],
   },
   {
     label: "COMPLIANCE",
     items: [
-      { key: "reports",    label: "Reports"                          },
-      { key: "penalties",  label: "Penalties"                        },
-      { key: "audit-logs", label: "Audit Logs"                       },
+      { 
+        key: "reports", 
+        label: "Reports", 
+        icon: <IoDocumentTextOutline /> 
+      },
+      { 
+        key: "penalties", 
+        label: "Penalties", 
+        icon: <IoAlertCircleOutline /> 
+      },
+      { 
+        key: "audit-logs", 
+        label: "Audit Logs", 
+        icon: <IoFingerPrintOutline /> 
+      },
     ],
   },
+];
+
+const USER_ACTIONS = [
+  { label: "Profile",  icon: <IoPersonCircleOutline /> },
+  { label: "Settings", icon: <IoSettingsOutline />       },
+  { label: "Logout",   icon: <IoLogOutOutline />, isDanger: true },
 ];
 
 /* ── Tiny square icon placeholder ── */
@@ -48,10 +96,11 @@ export default function Sidebar({ activeNav, setActiveNav }) {
       {/* ── Logo ─────────────────────────────────────── */}
       <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 min-h-[64px]">
         {/* IMAGE_PLACEHOLDER: LOGO */}
-        <div className="w-8 h-8 rounded-lg bg-[#89A1EF]/15 border border-[#89A1EF]/30
-                        flex items-center justify-center flex-shrink-0">
-          <span className="text-[11px] font-bold text-[#89A1EF] font-mono">S</span>
-        </div>
+        <img 
+          src="/imgs/SentinelAI_Logo.webp" 
+          alt="SentinelAI Secure Gateway" 
+          className="w-10 h-12 object-contain flex-shrink-0"
+        />
 
         {!collapsed && (
           <span className="text-gray-900 font-bold text-[15px] tracking-tight whitespace-nowrap">
@@ -62,7 +111,7 @@ export default function Sidebar({ activeNav, setActiveNav }) {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="ml-auto text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md
-                     hover:bg-gray-100"
+                     hover:bg-gray-100 cursor-pointer"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"
@@ -75,7 +124,7 @@ export default function Sidebar({ activeNav, setActiveNav }) {
       </div>
 
       {/* ── Nav ──────────────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-5">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-2 space-y-5">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
             {!collapsed && (
@@ -97,17 +146,22 @@ export default function Sidebar({ activeNav, setActiveNav }) {
                                   ${collapsed ? "justify-center" : ""}
                                   ${isActive
                                     ? "bg-[#89A1EF]/10 text-[#89A1EF]"
-                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"}`}
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"}`}
                     >
-                      {/* ICON_PLACEHOLDER */}
-                      <IconPH />
+                      {/* DYNAMIC ICON: Replaces IconPH */}
+                      <div className={`flex items-center justify-center shrink-0 
+                        ${collapsed ? "size-5" : "size-5"} 
+                        ${isActive ? "text-[#89A1EF]" : "text-gray-400 group-hover:text-gray-900"}`}>
+                        {/* We use React.cloneElement to force a specific size on the icon component */}
+                        {React.cloneElement(item.icon, { className: "size-full" })}
+                      </div>
 
                       {!collapsed && (
                         <>
                           <span className="flex-1 text-left truncate">{item.label}</span>
                           {item.badge && (
                             <span className="bg-[#89A1EF] text-white text-[10px] font-bold
-                                             px-1.5 py-0.5 rounded-full font-mono">
+                                            px-1.5 py-0.5 rounded-full font-mono">
                               {item.badge}
                             </span>
                           )}
@@ -117,9 +171,9 @@ export default function Sidebar({ activeNav, setActiveNav }) {
                       {/* Tooltip when collapsed */}
                       {collapsed && (
                         <span className="absolute left-full ml-2 px-2.5 py-1.5 bg-gray-900
-                                         text-white text-xs rounded-lg whitespace-nowrap
-                                         opacity-0 pointer-events-none group-hover:opacity-100
-                                         transition-opacity z-50 shadow-lg">
+                                        text-white text-xs rounded-lg whitespace-nowrap
+                                        opacity-0 pointer-events-none group-hover:opacity-100
+                                        transition-opacity z-50 shadow-lg">
                           {item.label}{item.badge ? ` (${item.badge})` : ""}
                         </span>
                       )}
@@ -148,24 +202,28 @@ export default function Sidebar({ activeNav, setActiveNav }) {
           </div>
         )}
 
-        {[
-          { label: "Profile"  },
-          { label: "Settings" },
-          { label: "Logout"   },
-        ].map((item) => (
+        {USER_ACTIONS.map((item) => (
           <button
             key={item.label}
             className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl text-[13px]
-                        text-gray-500 hover:bg-gray-100 hover:text-gray-800
-                        transition-all duration-150 group relative
-                        ${collapsed ? "justify-center" : ""}`}
+                        transition-all duration-150 group relative cursor-pointer
+                        ${collapsed ? "justify-center" : ""}
+                        ${item.isDanger 
+                          ? "text-gray-500 hover:bg-red-50 hover:text-red-600" 
+                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"}`}
           >
-            <IconPH />
+            {/* DYNAMIC ICON */}
+            <div className={`size-5 flex items-center justify-center shrink-0 
+              ${item.isDanger ? "group-hover:text-red-600" : "group-hover:text-gray-800"}`}>
+              {React.cloneElement(item.icon, { className: "size-full" })}
+            </div>
+
             {!collapsed && <span>{item.label}</span>}
+
             {collapsed && (
               <span className="absolute left-full ml-2 px-2.5 py-1.5 bg-gray-900 text-white
-                               text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none
-                               group-hover:opacity-100 transition-opacity z-50 shadow-lg">
+                              text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none
+                              group-hover:opacity-100 transition-opacity z-50 shadow-lg">
                 {item.label}
               </span>
             )}
