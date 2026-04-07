@@ -3,7 +3,8 @@ import {
   IoShieldCheckmarkOutline, 
   IoFlashOutline, 
   IoWarningOutline, 
-  IoHammerOutline 
+  IoHammerOutline,
+  IoSparklesOutline
 } from "react-icons/io5";
 
 import Card from "./Card";
@@ -54,7 +55,7 @@ const QUICK_ACTIONS = [
   { label:"Approve Accounts", sub:"7 pending",    icon:"✓" },
   { label:"Review Reports",   sub:"12 new",        icon:"⚑" },
   { label:"Assign Penalty",   sub:"3 unresolved",  icon:"⚖" },
-  { label:"Open AI Tools",    sub:"Monitor usage", icon:"⬡" },
+  { label:"Open AI Tools",    sub:"Monitor usage", icon:<IoSparklesOutline /> },
 ];
 
 const SYSTEM_STATUS = [
