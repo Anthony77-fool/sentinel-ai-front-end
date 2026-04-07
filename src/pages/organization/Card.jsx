@@ -11,6 +11,8 @@
  * sparkData  {number[]} 7-point mini bar chart values
  */
 
+import React from "react";
+
 /* ── Sparkbar ── */
 function SparkBar({ data = [], accent = "#89A1EF" }) {
   const max = Math.max(...data, 1);
@@ -69,25 +71,33 @@ function TrendArrow({ up }) {
 }
 
 export default function Card({
-  title     = "Metric",
-  value     = "—",
-  trend     = "+0",
-  trendUp   = true,
-  sub       = "vs last week",
+  title = "Metric",
+  value = "—",
+  icon = null, // <--- Add this prop
+  trend = "+0",
+  trendUp = true,
+  sub = "vs last week",
   sparkData = [30, 45, 40, 55, 50, 60, 70],
 }) {
   return (
-    <div
-      className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm
-                 hover:shadow-md hover:border-[#89A1EF]/30 transition-all duration-200"
-    >
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm
+                    hover:shadow-md hover:border-[#89A1EF]/30 transition-all duration-200">
+      
       {/* ── Header ── */}
       <div className="flex items-start justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
           {title}
         </p>
-        {/* ICON_PLACEHOLDER — swap <IconPH /> with a real icon component */}
-        <IconPH />
+        
+        {/* REFINED ICON CONTAINER */}
+        <div className="w-9 h-9 rounded-xl bg-[#89A1EF]/10 border border-[#89A1EF]/20
+                        flex items-center justify-center text-[#89A1EF] shrink-0">
+          {icon ? (
+             React.cloneElement(icon, { size: 18 }) 
+          ) : (
+            <span className="font-mono text-[10px]">⬡</span>
+          )}
+        </div>
       </div>
 
       {/* ── Value ── */}
@@ -99,10 +109,8 @@ export default function Card({
       <div className="flex items-end justify-between gap-3">
         <div className="flex items-center gap-1.5 flex-wrap">
           <TrendArrow up={trendUp} />
-          <span
-            className={`text-xs font-semibold font-mono
-                        ${trendUp ? "text-emerald-500" : "text-rose-400"}`}
-          >
+          <span className={`text-xs font-semibold font-mono
+                            ${trendUp ? "text-emerald-500" : "text-rose-400"}`}>
             {trend}
           </span>
           <span className="text-[11px] text-gray-400">{sub}</span>

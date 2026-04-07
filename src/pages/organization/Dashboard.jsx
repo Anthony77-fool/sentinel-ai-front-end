@@ -1,3 +1,11 @@
+import { 
+  IoPeopleOutline, 
+  IoShieldCheckmarkOutline, 
+  IoFlashOutline, 
+  IoWarningOutline, 
+  IoHammerOutline 
+} from "react-icons/io5";
+
 import Card from "./Card";
 import Table from "./Table";
 
@@ -5,11 +13,41 @@ import Table from "./Table";
    Data
 ───────────────────────────────────────────────────── */
 const STAT_CARDS = [
-  { title:"Total Employees",  value:"1,284", trend:"+12",  trendUp:true,  sub:"vs last week", sparkData:[40,55,45,60,52,65,70] },
-  { title:"Pending Approvals",value:"47",    trend:"+7",   trendUp:false, sub:"vs last week", sparkData:[20,35,28,42,38,44,47] },
-  { title:"AI Tool Usage",    value:"8,932", trend:"+23%", trendUp:true,  sub:"vs last week", sparkData:[50,60,58,72,68,80,90] },
-  { title:"Misuse Reports",   value:"136",   trend:"+18",  trendUp:false, sub:"vs last week", sparkData:[25,30,40,35,50,60,65] },
-  { title:"Penalties Issued", value:"28",    trend:"-4",   trendUp:true,  sub:"vs last week", sparkData:[45,50,40,38,35,30,28] },
+  { 
+    title: "Total Employees", 
+    value: "1,284", 
+    icon: <IoPeopleOutline />, 
+    trend: "+12", trendUp: true, sub: "vs last week", 
+    sparkData: [40, 55, 45, 60, 52, 65, 70] 
+  },
+  { 
+    title: "Pending Approvals", 
+    value: "47", 
+    icon: <IoShieldCheckmarkOutline />, 
+    trend: "+7", trendUp: false, sub: "vs last week", 
+    sparkData: [20, 35, 28, 42, 38, 44, 47] 
+  },
+  { 
+    title: "AI Tool Usage", 
+    value: "8,932", 
+    icon: <IoFlashOutline />, 
+    trend: "+23%", trendUp: true, sub: "vs last week", 
+    sparkData: [50, 60, 58, 72, 68, 80, 90] 
+  },
+  { 
+    title: "Misuse Reports", 
+    value: "136", 
+    icon: <IoWarningOutline />, 
+    trend: "+18", trendUp: false, sub: "vs last week", 
+    sparkData: [25, 30, 40, 35, 50, 60, 65] 
+  },
+  { 
+    title: "Penalties Issued", 
+    value: "28", 
+    icon: <IoHammerOutline />, 
+    trend: "-4", trendUp: true, sub: "vs last week", 
+    sparkData: [45, 50, 40, 38, 35, 30, 28] 
+  },
 ];
 
 const QUICK_ACTIONS = [
