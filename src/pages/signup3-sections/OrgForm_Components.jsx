@@ -13,7 +13,7 @@ import {
 } from "../../components/ui/select";
 
 //Components for Founding Date Dropdown
-export function Founding_Date() {
+export function Founding_Date({ onDateChange }) {
 
   const [date, setDate] = useState();
   
@@ -56,6 +56,7 @@ export function Founding_Date() {
               mode="single"
               selected={date}
               onSelect={(selectedDate) => {
+                onDateChange(selectedDate); // Pass selected date to parent
                 setDate(selectedDate);
                 setIsCalendarOpen(false);
               }}
@@ -74,7 +75,7 @@ export function Founding_Date() {
 }
 
 //Components for Entity Type Dropdown
-export function Entity_Type() {
+export function Entity_Type({ onTypeChange }) {
 
   const [entityType, setEntityType] = useState("");
 
@@ -87,7 +88,11 @@ export function Entity_Type() {
       <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 z-10 pointer-events-none">
         <IoLayersOutline className="w-5 h-5" />
       </span>
-      <Select onValueChange={setEntityType} defaultValue={entityType}>
+      <Select onValueChange={(value) => {
+        setEntityType(value);
+        onTypeChange(value); // Pass selected type to parent
+      }} defaultValue={entityType}
+      >
         <SelectTrigger className="w-full pl-11 py-3.5 lg:py-4 h-auto bg-white border-gray-200 rounded-xl text-gray-500 focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all leading-none">
           <SelectValue placeholder="Entity Type" />
         </SelectTrigger>
@@ -107,7 +112,7 @@ export function Entity_Type() {
 }
 
 //Component for MapCDN
-export function MapCDN () {
+export function MapCDN ({ onLocationChange }) {
   const [location, setLocation] = useState({ lat: null, lng: null });
   const [address, setAddress] = useState("Click the map to pin a location"); // New state for text address
 
@@ -124,6 +129,8 @@ export function MapCDN () {
           if (data && data.display_name) {
             console.log("Found Address:", data.display_name);
             setAddress(data.display_name);
+            // This ensures you pass the exact coordinates and the formatted address string back to the parent componenty
+            onLocationChange({ lat: location.lat, lng: location.lng }, data.display_name);
           } else {
             setAddress("Address not found for this location.");
           }
