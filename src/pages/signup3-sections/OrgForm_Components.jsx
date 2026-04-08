@@ -109,22 +109,51 @@ export function Entity_Type() {
 //Component for MapCDN
 export function MapCDN () {
   const [location, setLocation] = useState({ lat: null, lng: null });
+  const [address, setAddress] = useState("Click the map to pin a location"); // New state for text address
+
+  useEffect(() => {
+    if (location.lat && location.lng) {
+      setAddress("Locating address..."); // Show loading state
+
+      // Free Reverse Geocoding API to turn Lat/Lng into a real address
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data && data.display_name) {
+            console.log("Found Address:", data.display_name);
+            setAddress(data.display_name);
+          } else {
+            setAddress("Address not found for this location.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching address:", error);
+          setAddress("Error locating address.");
+        });
+    }
+  }, [location]);
 
   return (
-    
     <>
-
       <div className="space-y-2 w-full">
         <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1 block">
           Pin Location
         </label>
+        
+        {/* Address Display Box */}
+        <div className="px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 mb-2 shadow-sm">
+          <span className="font-semibold text-slate-700">Selected Address: </span> 
+          {address}
+        </div>
+
         <div className="relative block w-full h-[400px] rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50">
-          <MapControlsExample onLocationSelect={setLocation} />
+          <MapControlsExample onLocationSelect={(data) => {
+            setLocation(data);
+          }} />
         </div>
       </div>
-
     </>
-
   );
-
 }
