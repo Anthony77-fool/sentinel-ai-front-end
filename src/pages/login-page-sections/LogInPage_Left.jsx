@@ -2,8 +2,14 @@ import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { MdOutlineEmail } from "react-icons/md";
 import { CiUnlock, CiLock  } from "react-icons/ci";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../../firebase-config/Firebase";
 
 export function LogInPage_Left(){
+
+  async function signIn(){
+    await signInWithPopup(auth, googleProvider);
+  }
 
   return (
 
@@ -31,7 +37,9 @@ export function LogInPage_Left(){
           </div>
 
           {/* 2. GOOGLE LOGIN: White background, subtle border like the sample */}
-          <button className="relative w-full flex items-center justify-center bg-white border border-slate-200 rounded-lg px-4 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all mb-8 shadow-sm cursor-pointer group">
+          <button className="relative w-full flex items-center justify-center bg-white border border-slate-200 rounded-lg px-4 py-3.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all mb-8 shadow-sm cursor-pointer group"
+          onClick={signIn}
+          >
 
             {/* Icon positioned at the start (left) */}
             <div className="absolute left-4 flex items-center text-xl">
