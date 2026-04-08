@@ -1,15 +1,32 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineEmail } from "react-icons/md";
 import { Logo } from '../SignUp-reusables/Logo';
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase-config/Firebase";
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { SignUp_Modal } from '../SignUp-reusables/SignUp_Modal';
 
 export function SignUp1RightSide() {
 
-  const navigate = useNavigate(); // 2. Initialize navigate
+  const navigate = useNavigate(); // Initialize navigate
 
+  // --- MODAL STATE ---
+  const [modal, setModal] = useState({ isOpen: false, title: "", message: "", isSuccess: false });
+
+  // --- EMAIL VERIFICATION REMINDER ---
+  const handleVerifyEmail = (e) => {
+    e.preventDefault(); // Prevent page refresh
+    
+    setModal({
+      isOpen: true,
+      title: "Action Required",
+      message: "Please verify your email address to continue. Check your inbox for the verification link.",
+      isSuccess: false
+    });
+  };
+
+  //for the Google Sign In
   async function signIn() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -56,7 +73,7 @@ export function SignUp1RightSide() {
           <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">Verify your email</h3>
           <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Ensuring you're really you</p>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleVerifyEmail}>
 
             {/* Email Input */}
             <div className="relative">
@@ -71,7 +88,9 @@ export function SignUp1RightSide() {
             </div>
 
             {/* Submit Button */}
-            <button className="group relative w-full bg-[#89A1EF] text-white font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center hover:bg-[#768bd9] active:scale-[0.98] transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
+            <button className="group relative w-full bg-[#89A1EF] text-white font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center hover:bg-[#768bd9] active:scale-[0.98] transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer"
+            type='submit'
+            >
   
               {/* The Text stays centered because of the flex/justify-center on the parent */}
               <span>Continue</span>            {/* Verify first then changed to continue */}
@@ -117,6 +136,9 @@ export function SignUp1RightSide() {
           </p>
         </div>
       </div>
+
+      {/* ADD THE MODAL */}
+      <SignUp_Modal modal={modal} setModal={setModal} />
 
     </>
 

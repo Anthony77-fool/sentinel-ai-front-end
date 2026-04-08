@@ -41,8 +41,9 @@ export function Organization_Form() {
   const [modal, setModal] = useState({ isOpen: false, title: "", message: "", isSuccess: false });
 
   // --- VALIDATION LOGIC ---
-  const navigate = useNavigate(); // Ensure you import this from 'react-router-dom'
+  const navigate = useNavigate();
 
+  // This function will be called when the user clicks "Create Account"
   const handleCreateAccount = () => {
     const requiredFields = [
       formData.firstName,
