@@ -1,12 +1,15 @@
+import { useLocation } from "react-router-dom";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoCodeSlashOutline } from "react-icons/io5";
 
 export function Employee_Form() {
+  const location = useLocation();
+
+  // Access the passed data safely
+  const { firstName, lastName } = location.state || {};
 
   return (
-
     <>
-
       <form className="space-y-4">
 
         {/* Name Group (Two columns on larger screens) */}
@@ -15,11 +18,21 @@ export function Employee_Form() {
             <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
               <IoPersonOutline className="w-5 h-5" />
             </span>
-            <input type="text" placeholder="First Name" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+            <input 
+              type="text" 
+              placeholder="First Name" 
+              defaultValue={firstName || ""} 
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" 
+            />
           </div>
 
           <div className="relative">
-            <input type="text" placeholder="Last Name" className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+            <input 
+              type="text" 
+              placeholder="Last Name" 
+              defaultValue={lastName || ""} 
+              className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" 
+            />
           </div>
         </div>
 
@@ -39,7 +52,7 @@ export function Employee_Form() {
         <button className="group relative w-full bg-[#89A1EF] text-white font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center hover:bg-[#768bd9] active:scale-[0.98] transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
 
           {/* The Text stays centered because of the flex/justify-center on the parent */}
-          <span>Continue</span>            {/* Verify first then changed to continue */}
+          <span>Create Account</span>
 
           {/* The Icon is locked to the right side */}
           <div className="absolute right-6 flex items-center justify-center">
@@ -55,9 +68,6 @@ export function Employee_Form() {
 
         </button>
       </form>
-
     </>
-
   );
-
 }

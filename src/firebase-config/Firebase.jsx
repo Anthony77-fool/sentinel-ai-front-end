@@ -21,6 +21,6 @@ export const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-console.log("Data getting received from getAuth function: ", auth);
+//console.log("Data getting received from getAuth function: ", auth);
 
 export const googleProvider = new GoogleAuthProvider();

@@ -1,36 +1,70 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
 import { MdOutlineEmail } from "react-icons/md";
-import { CiUnlock, CiLock  } from "react-icons/ci";
+import { CiUnlock, CiLock } from "react-icons/ci";
 import { Logo } from "../SignUp-reusables/Logo";
 
 export function SignUp2RightSide() {
-  // 1. Create the state (defaulting to 'employee')
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Access data from SignUp1
+  const { email, firstName, lastName, firebaseUid } = location.state || {};
+
+  // Form State
   const [role, setRole] = useState("employee");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Logic to check if button should be enabled
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+
+  const handleContinue = (e) => {
+    e.preventDefault(); // Prevent page reload
+
+    if (!passwordsMatch) return;
+
+    // Determine target URL based on toggle
+    const targetUrl = role === "employee" 
+      ? "/signup3-employee" 
+      : "/signup3-organization";
+
+    // Navigate and append/pass all data to the next step
+    navigate(targetUrl, {
+      state: {
+        email,
+        firstName,
+        lastName,
+        firebaseUid,
+        password, // Pass password to save in MySQL later
+        role      // Pass selected role
+      }
+    });
+  };
 
   return (
-
     <>
-
-      {/* RIGHT SIDE: Form Panel (40% on desktop) */}
       <div className="w-full lg:w-[45%] h-full flex flex-col justify-center px-6 py-10 sm:px-12 lg:px-16 xl:px-24 bg-white overflow-y-auto">
-        
-        {/* Logo */}
         <Logo />
         
-        {/* Form Container */}
         <div className="max-w-md w-full mx-auto lg:mx-0">
           <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">Account Setup</h3>
           <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Establishing your secure gateway access</p>
 
-          <form className="space-y-4">
-            {/* Email Input */}
+          <form className="space-y-4" onSubmit={handleContinue}>
+            
+            {/* Email Input (Read Only) */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
                 <MdOutlineEmail className="w-5 h-5" />
               </span>
-              <input type="email" placeholder="Email" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              <input 
+                type="email" 
+                value={email || ""} 
+                readOnly 
+                className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 cursor-not-allowed outline-none" 
+              />
             </div>
 
             {/* Password Input */}
@@ -38,7 +72,13 @@ export function SignUp2RightSide() {
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
                 <CiUnlock className="w-5 h-5" />
               </span>
-              <input type="password" placeholder="Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              <input 
+                type="password" 
+                placeholder="Password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" 
+              />
             </div>
 
             {/* Confirm Password Input */}
@@ -46,28 +86,26 @@ export function SignUp2RightSide() {
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
                 <CiLock className="w-5 h-5" />
               </span>
-              <input type="password" placeholder="Confirm Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              <input 
+                type="password" 
+                placeholder="Confirm Password" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`w-full pl-11 pr-4 py-3.5 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  confirmPassword && !passwordsMatch ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-[#89A1EF]"
+                }`}
+              />
             </div>
 
-            {/* Role Toggle (Segmented Control) */}
+            {/* Role Toggle */}
             <div className="relative p-1 bg-gray-100 rounded-xl flex items-center mt-2 w-full">
-      
-             {/* 2. The Animated Background Slider */}
               <motion.div
-                initial={false} // Prevents the component from re-calculating from 0 on every render
-                animate={{
-                  // We move it 100% of its OWN width (which is 50% of the parent)
-                  x: role === "employee" ? "0%" : "100%",
-                }}
-                transition={{ 
-                  duration: 0.3, 
-                  ease: "easeInOut" 
-                }}
-                /* Add w-1/2 here so the box actually has a physical size to show */
+                initial={false}
+                animate={{ x: role === "employee" ? "0%" : "100%" }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="absolute w-1/2 h-[calc(100%-8px)] bg-white rounded-lg shadow-sm z-0"
               />
 
-              {/* 3. The Buttons */}
               <button
                 type="button"
                 onClick={() => setRole("employee")}
@@ -87,16 +125,23 @@ export function SignUp2RightSide() {
               >
                 Organization Admin
               </button>
-
-              {/* Hidden input to store the value for the form submission */}
-              <input type="hidden" name="role" value={role} />
             </div>
 
-            {/* Submit Button */}
-            <button className="group relative w-full bg-[#89A1EF] text-white font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center hover:bg-[#768bd9] active:scale-[0.98] transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
+            {/* Submit Button (Disabled logic added) */}
+            <button 
+              type="submit"
+              disabled={!passwordsMatch}
+              className={`group relative w-full font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center transition-all shadow-lg 
+                ${passwordsMatch 
+                  ? "bg-[#89A1EF] text-white hover:bg-[#768bd9] active:scale-[0.98] shadow-[#89A1EF]/20 cursor-pointer" 
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                }`}
+            >
               <span>Continue</span>
               <div className="absolute right-6 flex items-center justify-center">
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
               </div>
             </button>
           </form>
@@ -107,15 +152,11 @@ export function SignUp2RightSide() {
             <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-400">or</span></div>
           </div>
 
-          {/* Login Footer */}
           <p className="text-center mt-6 lg:mt-8 text-gray-600 font-medium">
             Already have an account? <Link to="/login" className="text-[#89A1EF] font-bold hover:text-[#6282eb] ml-1 cursor-pointer">Login</Link>
           </p>
         </div>
       </div>
-
     </>
-
-  )
-
+  );
 }

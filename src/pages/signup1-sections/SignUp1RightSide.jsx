@@ -2,8 +2,44 @@ import { Link } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineEmail } from "react-icons/md";
 import { Logo } from '../SignUp-reusables/Logo';
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../../firebase-config/Firebase";
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 
 export function SignUp1RightSide() {
+
+  const navigate = useNavigate(); // 2. Initialize navigate
+
+  async function signIn() {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // 3. Extract information
+      // Google usually provides 'displayName' (Full Name)
+      const fullName = user.displayName || "";
+      const email = user.email;
+
+      // Simple split logic for First and Last name
+      const nameArray = fullName.split(" ");
+      const firstName = nameArray[0] || "";
+      const lastName = nameArray.slice(1).join(" ") || "";
+
+      // 4. Navigate to /signup2 and pass the data
+      navigate('/signup2', { 
+        state: { 
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          firebaseUid: user.uid // Good to have for your MySQL bridge later
+        } 
+      });
+
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      // You could add an alert here if the user closes the popup
+    }
+  }
 
   return (
 
@@ -62,7 +98,9 @@ export function SignUp1RightSide() {
           </div>
 
           {/* Google Button */}
-          <button className="relative w-full flex items-center justify-center gap-3 border border-gray-200 py-3.5 lg:py-4 rounded-xl font-bold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer">
+          <button className="relative w-full flex items-center justify-center gap-3 border border-gray-200 py-3.5 lg:py-4 rounded-xl font-bold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer"
+          onClick={signIn}
+          >
             
             {/* Icon positioned at the start */}
             <div className="absolute left-6 flex items-center justify-center">
