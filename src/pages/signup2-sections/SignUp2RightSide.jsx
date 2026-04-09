@@ -18,6 +18,7 @@ export function SignUp2RightSide() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   // Logic to check if button should be enabled
+  const isPasswordValid = password.length >= 8; // Basic length check (can be enhanced)
   const passwordsMatch = password.length > 0 && password === confirmPassword;
 
   const handleContinue = (e) => {
@@ -77,7 +78,11 @@ export function SignUp2RightSide() {
                 placeholder="Password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" 
+                className={`w-full pl-11 pr-4 py-3.5 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  password && !isPasswordValid 
+                    ? "border-red-400 focus:ring-red-400" 
+                    : "border-gray-200 focus:ring-[#89A1EF]"
+                }`}
               />
             </div>
 
@@ -132,7 +137,7 @@ export function SignUp2RightSide() {
               type="submit"
               disabled={!passwordsMatch}
               className={`group relative w-full font-bold py-3.5 lg:py-4 rounded-xl mt-4 lg:mt-6 flex items-center justify-center transition-all shadow-lg 
-                ${passwordsMatch 
+                ${passwordsMatch && isPasswordValid
                   ? "bg-[#89A1EF] text-white hover:bg-[#768bd9] active:scale-[0.98] shadow-[#89A1EF]/20 cursor-pointer" 
                   : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
                 }`}
