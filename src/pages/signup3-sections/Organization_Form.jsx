@@ -43,8 +43,13 @@ export function Organization_Form() {
   // --- VALIDATION LOGIC ---
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // This function will be called when the user clicks "Create Account"
-  const handleCreateAccount = () => {
+  const handleCreateAccount = async () => {
+    setIsLoading(true);
+
+    //Fields to be passed to the backend for registration
     const requiredFields = [
       formData.firstName,
       formData.lastName,
@@ -57,6 +62,7 @@ export function Organization_Form() {
     const isFormComplete = requiredFields.every(field => field && field.toString().trim() !== "");
     const isLocationSet = formData.locationCoords.lat !== null;
 
+    //Valudation Checks
     if (!isFormComplete || !isLocationSet) {
       setModal({
         isOpen: true,
@@ -66,21 +72,51 @@ export function Organization_Form() {
       });
       return;
     }
-
+    
     // SUCCESS CASE
     console.log("🚀 SentinelAI Registration Payload:", formData);
     
-    setModal({
-      isOpen: true,
-      title: "Account Created!",
-      message: "Your organization has been successfully registered. Redirecting to login...",
-      isSuccess: true
-    });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register-organization`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json', // Crucial for Laravel to send JSON errors
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // Proceed to login after a short delay so they can see the success message
-    setTimeout(() => {
-      navigate('/login'); 
-    }, 2500);
+      const result = await response.json();
+
+      if (response.status === 201) {
+        setModal({
+          isOpen: true,
+          title: "Registration Successful",
+          message: "Welcome to SentinelAI! Your organization and admin account are ready. Redirecting...",
+          isSuccess: true
+        });
+
+        setTimeout(() => navigate('/login'), 3000);
+      } else {
+        // Handle Laravel Validation Errors (422) or Server Errors (500)
+        setModal({
+          isOpen: true,
+          title: "Registration Failed",
+          message: result.message || "Something went wrong. Please try again.",
+          isSuccess: false
+        });
+      }
+    } catch (error) {
+      setModal({
+        isOpen: true,
+        title: "Connection Error",
+        message: "Could not connect to the server. Is your Laravel backend running?",
+        isSuccess: false
+      });
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   return (
