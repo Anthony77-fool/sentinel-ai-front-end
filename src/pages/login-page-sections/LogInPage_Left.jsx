@@ -1,15 +1,75 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { MdOutlineEmail } from "react-icons/md";
 import { CiUnlock, CiLock  } from "react-icons/ci";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase-config/Firebase";
+import { Modal } from "../signup3-sections/OrgForm_Components";
 
 export function LogInPage_Left(){
 
   async function signIn(){
     await signInWithPopup(auth, googleProvider);
   }
+
+  const navigate = useNavigate();
+  
+  // States for inputs
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // State for your existing Modal component
+  const [modal, setModal] = useState({ isOpen: false, title: "", message: "", isSuccess: false });
+
+  // Handle form submission for Login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      //data json, coming from backend
+      const data = await response.json();
+
+      if (response.ok) {
+        // 1. Store the token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // 2. Redirect based on role or to dashboard
+        data.user.role === 'employee' 
+          ? navigate("/employee/dashboard") 
+          : navigate("/organization/dashboard");
+        
+      } else {
+        // Show error modal
+        setModal({
+          isOpen: true,
+          title: "Login Failed",
+          message: data.message || "Invalid credentials.",
+          isSuccess: false
+        });
+      }
+    } catch (error) {
+      setModal({
+        isOpen: true,
+        title: "Network Error",
+        message: "Could not connect to the server.",
+        isSuccess: false
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
 
@@ -62,7 +122,7 @@ export function LogInPage_Left(){
           </div>
 
           {/* 4. FORM: Clean inputs with subtle borders and labels */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             {/* Email Input */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
@@ -71,6 +131,9 @@ export function LogInPage_Left(){
               <input 
                 type="email" 
                 placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full pl-11 pr-4 py-3.5 lg:py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all"
               />
             </div>
@@ -80,13 +143,20 @@ export function LogInPage_Left(){
               <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
                 <CiUnlock className="w-5 h-5" />
               </span>
-              <input type="password" placeholder="Password" className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
+              <input 
+              type={showPassword ? "text" : "password"}
+              placeholder="Password" 
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#89A1EF] focus:border-transparent transition-all" />
             </div>
 
+            {/* Show Password Checkbox & Forgot Password Link */}
             <div className="flex items-center justify-between text-sm pt-1">
               <label className="flex items-center gap-2 text-slate-500 cursor-pointer hover:text-slate-700 transition-colors">
                 <input 
                   type="checkbox" 
+                  checked={showPassword}
+                  onChange={() => setShowPassword(!showPassword)}
                   className="
                     w-4 h-4 rounded 
                     border border-slate-300 bg-white /* <--- Added border and bg-white */
@@ -113,12 +183,13 @@ export function LogInPage_Left(){
             {/* 5. SUBMIT BUTTON: Matching the indigo/violet tone from Sleeknote */}
             <button 
               type="submit" 
+              disabled={isLoading}
               className="w-full bg-[#89A1EF] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#768bd9] transition-all flex items-center justify-between group shadow-lg shadow-indigo-200 mt-4 cursor-pointer"
             >
               {/* Empty span to balance the flex-spacing so 'Log in' stays centered */}
               <span className="w-5"></span> 
               
-              <span>Log in</span>
+              <span>{isLoading ? "Authenticating..." : "Log in"}</span>
               
               <span className="w-5 group-hover:translate-x-1 transition-transform opacity-70 text-xl">→</span>
             </button>
@@ -136,6 +207,10 @@ export function LogInPage_Left(){
 
         </div>
       </div>
+
+      {/* Your Modal Component */}
+      <Modal modal={modal} setModal={setModal} />
+
     </>
 
   )
