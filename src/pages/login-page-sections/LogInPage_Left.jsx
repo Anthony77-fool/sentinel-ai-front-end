@@ -5,14 +5,53 @@ import { Link } from "react-router-dom";
 import { MdOutlineEmail } from "react-icons/md";
 import { CiUnlock, CiLock  } from "react-icons/ci";
 import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../../firebase-config/Firebase";
+import { GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../../firebase-config/Firebase";
 import { Modal } from "../signup3-sections/OrgForm_Components";
 
 export function LogInPage_Left(){
 
-  async function signIn(){
-    await signInWithPopup(auth, googleProvider);
-  }
+  //for Google Sign-In
+  const signIn = async () => {
+    try {
+      // 1. Trigger Firebase Google Login
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // 2. Send the Firebase UID to your Laravel Backend
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ 
+          firebaseUid: user.uid,
+          email: user.email 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        data.user.role === 'employee' 
+          ? navigate("/employee/dashboard") 
+          : navigate("/organization/dashboard");
+      } else {
+        setModal({
+          isOpen: true,
+          title: "Account Not Found",
+          message: "This Google account is not registered. Please sign up first.",
+          isSuccess: false
+        });
+      }
+      
+
+    } catch (error) {
+      console.error("Google Auth Error:", error);
+    }
+  };
 
   const navigate = useNavigate();
   
@@ -25,7 +64,7 @@ export function LogInPage_Left(){
   // State for your existing Modal component
   const [modal, setModal] = useState({ isOpen: false, title: "", message: "", isSuccess: false });
 
-  // Handle form submission for Login
+  // Handle manual form submission for Login
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
