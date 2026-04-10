@@ -31,30 +31,42 @@ export function SignUp1RightSide() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
-      // 3. Extract information
-      // Google usually provides 'displayName' (Full Name)
-      const fullName = user.displayName || "";
       const email = user.email;
 
-      // Simple split logic for First and Last name
+      // 1. Check if user exists in your MySQL DB
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/check-user/${email}`);
+      const data = await response.json();
+
+      if (data.exists) {
+        // 2. USER EXISTS: Show modal and then redirect to Login
+        setModal({
+          isOpen: true,
+          title: "Account Found",
+          message: "You already have an account with this Google email. Redirecting to login...",
+          isSuccess: false 
+        });
+        
+        setTimeout(() => navigate('/login'), 3000);
+        return; 
+      }
+
+      // 3. USER IS NEW: Proceed to Signup Step 2
+      const fullName = user.displayName || "";
       const nameArray = fullName.split(" ");
       const firstName = nameArray[0] || "";
       const lastName = nameArray.slice(1).join(" ") || "";
 
-      // 4. Navigate to /signup2 and pass the data
       navigate('/signup2', { 
         state: { 
           email: email,
           firstName: firstName,
           lastName: lastName,
-          firebaseUid: user.uid // Good to have for your MySQL bridge later
+          firebaseUid: user.uid 
         } 
       });
 
     } catch (error) {
       console.error("Google Sign-In Error:", error);
-      // You could add an alert here if the user closes the popup
     }
   }
 
@@ -73,25 +85,24 @@ export function SignUp1RightSide() {
           <h3 className="text-3xl lg:text-4xl font-bold inline-block text-gray-700">Verify your email</h3>
           <p className="text-gray-400 text-base lg:text-lg mt-2 mb-8 lg:mb-10">Ensuring you're really you</p>
 
+          {/* 1. MANUAL EMAIL FORM (Keep handleVerifyEmail here) */}
           <form className="space-y-4" onSubmit={handleVerifyEmail}>
-
-            {/* Google Button */}
-            <button className="relative w-full flex items-center justify-center gap-3 border border-gray-200 py-3.5 lg:py-4 rounded-xl font-bold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer"
-            onClick={signIn}
-            >
-              
-              {/* Icon positioned at the start */}
-              <div className="absolute left-6 flex items-center justify-center">
-                <FcGoogle className="text-xl lg:text-3xl" /> 
-              </div>
-
-              {/* Button Text */}
-              <span className="text-gray-500 lg:text-md">Sign Up with Google</span>
-            </button>
-
+            
           </form>
 
-          {/* Divider */}
+          {/* 2. GOOGLE BUTTON (Move it OUTSIDE the form) */}
+          <button 
+            type="button" // Always specify type="button" to prevent form submission
+            className="relative w-full flex items-center justify-center gap-3 border border-gray-200 py-3.5 lg:py-4 rounded-xl font-bold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer"
+            onClick={signIn}
+          >
+            <div className="absolute left-6 flex items-center justify-center">
+              <FcGoogle className="text-xl lg:text-3xl" /> 
+            </div>
+            <span className="text-gray-500 lg:text-md">Sign Up with Google</span>
+          </button>
+
+          {/* 3. DIVIDER */}
           <div className="relative my-6 lg:my-8">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
             <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-gray-400">or</span></div>
