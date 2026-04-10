@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { IoBusinessOutline, IoPersonOutline } from "react-icons/io5";
 import { Founding_Date, Entity_Type, MapCDN } from './OrgForm_Components';
 import { Modal } from './OrgForm_Components';
+import { generateBusinessCode } from '../../utils/generateBusinessCode';
 
 export function Organization_Form() {
   const location = useLocation();
@@ -70,20 +71,33 @@ export function Organization_Form() {
         message: "Please ensure all fields are filled and the organization location is pinned on the map.",
         isSuccess: false
       });
+      setIsLoading(false); // Make sure to turn off loading if validation fails
       return;
     }
+
+    // Generate the unique join code
+    const orgJoinCode = generateBusinessCode();
     
     // SUCCESS CASE
     console.log("🚀 SentinelAI Registration Payload:", formData);
+
+    // Prepare the final payload (including the code and formatted date)
+    const registrationPayload = {
+      ...formData,
+      joinCode: orgJoinCode, // Adding the new unique code
+      foundingDate: formData.foundingDate 
+        ? new Date(formData.foundingDate).toISOString().split('T')[0] 
+        : null
+    };
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register-organization`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json', // Crucial for Laravel to send JSON errors
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(registrationPayload), // 4. Send the updated payload
       });
 
       const result = await response.json();
@@ -92,17 +106,15 @@ export function Organization_Form() {
         setModal({
           isOpen: true,
           title: "Registration Successful",
-          message: "Welcome to SentinelAI! Your organization and admin account are ready. Redirecting...",
+          message: `Account created! Your Organization Join Code is: ${orgJoinCode}. Redirecting...`,
           isSuccess: true
         });
-
-        setTimeout(() => navigate('/login'), 3000);
+        setTimeout(() => navigate('/login'), 4000); // Longer delay so they see the code
       } else {
-        // Handle Laravel Validation Errors (422) or Server Errors (500)
         setModal({
           isOpen: true,
           title: "Registration Failed",
-          message: result.message || "Something went wrong. Please try again.",
+          message: result.message || "Something went wrong.",
           isSuccess: false
         });
       }
@@ -110,7 +122,7 @@ export function Organization_Form() {
       setModal({
         isOpen: true,
         title: "Connection Error",
-        message: "Could not connect to the server. Is your Laravel backend running?",
+        message: "Check if your Laravel server is running.",
         isSuccess: false
       });
     } finally {
