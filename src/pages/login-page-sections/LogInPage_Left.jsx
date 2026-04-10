@@ -8,6 +8,7 @@ import { signInWithPopup } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../firebase-config/Firebase";
 import { Modal } from "../signup3-sections/OrgForm_Components";
+import { Loading_Overlay } from "./Loading_Overlay";
 
 export function LogInPage_Left(){
 
@@ -18,7 +19,10 @@ export function LogInPage_Left(){
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      
+
+      // Start the loading overlay immediately after the popup closes
+      setIsLoading(true);
+
       // 2. Send the Firebase UID to your Laravel Backend
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login/google`, {
         method: "POST",
@@ -39,6 +43,7 @@ export function LogInPage_Left(){
           ? navigate("/employee/dashboard") 
           : navigate("/organization/dashboard");
       } else {
+        setIsLoading(false); // Stop loading to show the error modal
         setModal({
           isOpen: true,
           title: "Account Not Found",
@@ -49,6 +54,7 @@ export function LogInPage_Left(){
       
 
     } catch (error) {
+      setIsLoading(false);
       console.error("Google Auth Error:", error);
     }
   };
@@ -249,6 +255,7 @@ export function LogInPage_Left(){
 
       {/* Your Modal Component */}
       <Modal modal={modal} setModal={setModal} />
+      <Loading_Overlay isLoading={isLoading} />
 
     </>
 
