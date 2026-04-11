@@ -6,6 +6,7 @@ import Topbar    from "../../components/organization/Topbar";
 import Dashboard from "./sections/Dashboard";
 import AiTools   from "./sections/AiTools"; 
 import EmployeeDashboard from "./sections/Employee";
+import Rules from "./sections/Rules";
 
 export default function Main() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -20,8 +21,8 @@ export default function Main() {
         return <AiTools sidebarCollapsed={sidebarCollapsed} />;
       case "employees":
         return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} />;
-      case "reports":
-        return <div className="p-10 ml-64">Reports Content</div>;
+      case "rules":
+        return <Rules sidebarCollapsed={sidebarCollapsed} />;
       case "penalties":
         return <div className="p-10 ml-64">Penalties Content</div>;
       default:

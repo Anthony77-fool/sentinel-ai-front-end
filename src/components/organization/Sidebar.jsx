@@ -43,8 +43,8 @@ const NAV_SECTIONS = [
     label: "COMPLIANCE",
     items: [
       { 
-        key: "reports", 
-        label: "Reports", 
+        key: "rules", 
+        label: "Rules", 
         icon: <IoDocumentTextOutline /> 
       },
       { 
