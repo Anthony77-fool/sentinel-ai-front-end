@@ -7,6 +7,7 @@ import Dashboard from "./sections/Dashboard";
 import AiTools   from "./sections/AiTools"; 
 import EmployeeDashboard from "./sections/Employee";
 import Rules from "./sections/Rules";
+import Penalties from "./sections/Penalties";
 
 export default function Main() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -24,7 +25,7 @@ export default function Main() {
       case "rules":
         return <Rules sidebarCollapsed={sidebarCollapsed} />;
       case "penalties":
-        return <div className="p-10 ml-64">Penalties Content</div>;
+        return <Penalties sidebarCollapsed={sidebarCollapsed} />;
       default:
         return <Dashboard sidebarCollapsed={sidebarCollapsed} />;
     }
