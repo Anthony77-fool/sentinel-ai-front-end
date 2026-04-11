@@ -7,8 +7,8 @@ import {
   IoSparklesOutline
 } from "react-icons/io5";
 
-import Card from "./Card";
-import Table from "./Table";
+import Card from "../../../components/organization/Card";
+import Table from "../../../components/organization/Table";
 
 /* ─────────────────────────────────────────────────────
    Data

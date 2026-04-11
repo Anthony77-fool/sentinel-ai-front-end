@@ -37,12 +37,6 @@ const NAV_SECTIONS = [
         label: "Employees", 
         icon: <IoPeopleOutline /> 
       },
-      { 
-        key: "approvals", 
-        label: "Account Approvals", 
-        badge: 7, 
-        icon: <IoShieldCheckmarkOutline /> 
-      },
     ],
   },
   {
@@ -57,11 +51,6 @@ const NAV_SECTIONS = [
         key: "penalties", 
         label: "Penalties", 
         icon: <IoAlertCircleOutline /> 
-      },
-      { 
-        key: "audit-logs", 
-        label: "Audit Logs", 
-        icon: <IoFingerPrintOutline /> 
       },
     ],
   },
@@ -84,8 +73,7 @@ const IconPH = ({ size = "w-4 h-4" }) => (
   </span>
 );
 
-export default function Sidebar({ activeNav, setActiveNav }) {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollapsed }) {
 
   return (
     <aside
