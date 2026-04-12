@@ -62,7 +62,7 @@ export function Right_Col() {
           </div>
 
           {/* Information Context */}
-          <div className="mt-8 p-4 bg-gray-50 border border-gray-100 rounded-2xl">
+          <div className="mt-6 p-4 bg-blue-50/50 border border-blue-100 rounded-xl">
             <div className="flex gap-3">
               <IoInformationCircleOutline className="text-[#89A1EF] size-5 shrink-0" />
               <p className="text-[11px] text-gray-500 leading-relaxed italic">
