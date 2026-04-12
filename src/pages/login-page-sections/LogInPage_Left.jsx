@@ -8,7 +8,7 @@ import { signInWithPopup } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../firebase-config/Firebase";
 import { Modal } from "../signup3-sections/OrgForm_Components";
-import { Loading_Overlay } from "./Loading_Overlay";
+import { Loading_Overlay } from "../../components/Loading_Overlay";
 
 export function LogInPage_Left(){
 
@@ -255,7 +255,11 @@ export function LogInPage_Left(){
 
       {/* Your Modal Component */}
       <Modal modal={modal} setModal={setModal} />
-      <Loading_Overlay isLoading={isLoading} />
+      <Loading_Overlay 
+        isLoading={isLoading} 
+        title="Authenticating..." 
+        subtitle="Verifying your credentials with SentinelAI" 
+      />
 
     </>
 

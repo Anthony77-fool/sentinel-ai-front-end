@@ -1,4 +1,6 @@
-export function Loading_Overlay({ isLoading }) {
+//dynamic Loading Overlay
+
+export function Loading_Overlay({ isLoading, title, subtitle }) {
   if (!isLoading) return null;
 
   return (
@@ -7,8 +9,9 @@ export function Loading_Overlay({ isLoading }) {
         {/* Modern Spinner */}
         <div className="w-12 h-12 border-4 border-[#89A1EF]/30 border-t-[#89A1EF] rounded-full animate-spin mb-4"></div>
         
-        <h3 className="text-white font-bold text-lg tracking-wide">Authenticating...</h3>
-        <p className="text-slate-200 text-sm mt-1">Verifying your credentials with SentinelAI</p>
+        {/* Dynamic Text */}
+        <h3 className="text-white font-bold text-lg tracking-wide">{title}</h3>
+        <p className="text-slate-200 text-sm mt-1">{subtitle}</p>
       </div>
     </div>
   );
