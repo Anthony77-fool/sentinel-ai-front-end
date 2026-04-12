@@ -50,7 +50,7 @@ export function Left_Col() {
                   <label className="block text-[11px] font-bold text-gray-400 uppercase mb-2">Behavioral Guidance</label>
                   <textarea 
                     rows="6"
-                    placeholder="Describe how the agent should behave... (e.g., 'Never reveal internal API keys', 'Always summarize findings in bullet points')"
+                    placeholder="Explain exactly what this rule does... (e.g., 'If a message contains a social security number, redact the middle 5 digits and flag for admin review.')"
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#89A1EF]/20 resize-none"
                   ></textarea>
                 </div>
@@ -69,9 +69,9 @@ export function Left_Col() {
             )}
 
             <div className="mt-6 flex justify-end">
-              <button className="flex items-center gap-2 px-6 py-2.5 bg-[#89A1EF] text-white rounded-xl text-sm font-bold hover:bg-[#768bd9] shadow-lg shadow-[#89A1EF]/20 transition-all">
+              <button className="flex items-center gap-2 px-6 py-2.5 bg-[#89A1EF] text-white rounded-xl text-sm font-bold hover:bg-[#768bd9] shadow-lg shadow-[#89A1EF]/20 transition-all cursor-pointer">
                 <IoAddOutline className="size-5" />
-                Deploy Rule
+                Add Rule
               </button>
             </div>
           </div>
