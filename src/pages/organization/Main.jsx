@@ -3,11 +3,11 @@ import Sidebar   from "../../components/organization/Sidebar";
 import Topbar    from "../../components/organization/Topbar";
 
 // Import your sections
-import Dashboard from "./sections/Dashboard";
-import AiTools   from "./sections/AiTools"; 
-import EmployeeDashboard from "./sections/Employee";
-import Rules from "./sections/Rules";
-import Penalties from "./sections/Penalties";
+import Dashboard from "./main-sections/Dashboard";
+import AiTools   from "./main-sections/AiTools"; 
+import EmployeeDashboard from "./main-sections/Employee";
+import Rules from "./main-sections/Rules";
+import Penalties from "./main-sections/Penalties";
 
 export default function Main() {
   const [activeNav, setActiveNav] = useState("dashboard");
