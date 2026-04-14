@@ -1,12 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { 
  IoInformationCircleOutline, 
  IoShieldCheckmarkOutline, 
  IoDocumentTextOutline, 
  IoCloudUploadOutline } from "react-icons/io5";
 import { UpdatedRuleCard } from "./UpdatedRuleCard";
+import { RuleModal } from "../../../../components/organization/RuleModal";
+import { Loading_Overlay } from "../../../../components/Loading_Overlay";
+import { Modal } from "../../../../components/organization/Modal";
 
 export function Right_Col() {
+  const queryClient = useQueryClient();
+  const [selectedRule, setSelectedRule] = useState(null);
+  const [modalMode, setModalMode] = useState({ isOpen: false, isReadOnly: false });
+  const [isProcessing, setIsProcessing] = useState(false); // Local state for overlay
 
   const { data: rules = [], isLoading } = useQuery({
     queryKey: ["governance-rules"],
@@ -21,17 +29,108 @@ export function Right_Col() {
       const result = await response.json();
       return result.data || [];
     },
-    // Optional: Auto-refresh every 30 seconds to keep it "Live"
     refetchInterval: 30000, 
   });
 
+  // Initial state for the custom confirmation modal
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    isDanger: false,
+    isSuccess: false,
+    ruleId: null // Store the ID of the rule we want to delete
+  });
+
+  const confirmDelete = async () => {
+    const ruleId = confirmModal.ruleId;
+    if (!ruleId) return;
+
+    // Close the confirmation modal and show the processing overlay
+    setConfirmModal({ ...confirmModal, isOpen: false });
+    setIsProcessing(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rules_delete/${ruleId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ["governance-rules"] });
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleAction = async (type, rule) => {
+    if (type === 'delete') {
+      // Open custom modal instead of window.confirm
+      setConfirmModal({
+        isOpen: true,
+        title: "Delete Rule?",
+        message: `Are you sure you want to remove "${rule.name}"? This action cannot be undone.`,
+        isDanger: true,
+        isSuccess: false,
+        ruleId: rule.id // Pass the ID here so onConfirm knows what to delete
+      });
+      return;
+    }
+
+    setSelectedRule(rule);
+    setModalMode({ isOpen: true, isReadOnly: type === 'view' });
+  };
+
+  const handleEditSave = async () => {
+    if (!selectedRule) return;
+
+    setIsProcessing(true); // Start Loading
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rules_edit/${selectedRule.id}`, {
+        method: "PUT", // Use PUT as we discussed for restful edit
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: selectedRule.name,
+          definition: selectedRule.definition,
+          type: selectedRule.type
+        })
+      });
+
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ["governance-rules"] });
+        setModalMode({ ...modalMode, isOpen: false });
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to update rule.");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+    } finally {
+      setIsProcessing(false); // Stop Loading
+    }
+  };
+
   return (
     <>
-      {/* ── Right Column: Newly Updated Rules ── */}
+      {/* Dynamic Overlay for Delete/Edit actions */}
+      <Loading_Overlay 
+        isLoading={isProcessing} 
+        title="Processing Request" 
+        subtitle="Updating the security backbone..." 
+      />
+
       <div className="space-y-6">
         <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col h-full">
-          
-          {/* Header Part */}
+          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="font-bold text-gray-800 flex items-center gap-2 text-lg">
@@ -40,32 +139,24 @@ export function Right_Col() {
               </h3>
               <p className="text-[11px] text-gray-400 font-medium">Real-time agent policy updates</p>
             </div>
-            <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              <span className="text-[10px] font-bold text-green-600 uppercase tracking-tighter">Live</span>
-            </div>
+            {/* Live Indicator ... */}
           </div>
 
-          {/* Senior Comment: h-[300px] ensures only 3 rules show; overflow-y-auto enables the scroll */}
-          <div className="space-y-3 flex-1 overflow-y-auto h-[300px] min-h-[300px] max-h-[300px] pr-2 custom-scrollbar">
+          {/* List Area */}
+          <div className="space-y-3 flex-1 overflow-y-auto h-[300px] min-h-[300px] pr-2 custom-scrollbar">
             {isLoading ? (
                 <p className="text-center text-xs text-gray-400 py-10">Loading feed...</p>
             ) : rules.length > 0 ? (
               rules.map((rule) => (
                 <UpdatedRuleCard 
                   key={rule.id}
+                  rule={rule}
                   title={rule.name} 
                   type={rule.type === 'text' ? 'Direct Text' : 'Document'} 
                   time={rule.created_at_human || "Recently"} 
-                  status={rule.status.charAt(0).toUpperCase() + rule.status.slice(1)}
-                  icon={
-                    rule.type === 'text' 
-                    ? <IoShieldCheckmarkOutline className="size-4" /> 
-                    : <IoDocumentTextOutline className="size-4" />
-                  }
+                  status={rule.status}
+                  onAction={handleAction}
+                  icon={rule.type === 'text' ? <IoShieldCheckmarkOutline className="size-4" /> : <IoDocumentTextOutline className="size-4" />}
                 />
               ))
             ) : (
@@ -96,6 +187,25 @@ export function Right_Col() {
 
         </div>
       </div>
+
+      {/* The Rule Modal */}
+      <RuleModal 
+        isOpen={modalMode.isOpen}
+        isReadOnly={modalMode.isReadOnly}
+        ruleData={selectedRule}
+        setRuleData={setSelectedRule} // Crucial: so the modal can update the state before saving
+        onClose={() => setModalMode({ ...modalMode, isOpen: false })}
+        onSave={handleEditSave}
+      />
+
+      {/* Custom Confirmation Modal */}
+      <Modal 
+        modal={confirmModal} 
+        setModal={setConfirmModal} 
+        onConfirm={confirmDelete}
+        confirmText="Delete" 
+      />
+
     </>
   );
 }

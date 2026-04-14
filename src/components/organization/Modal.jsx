@@ -1,4 +1,4 @@
-export function Modal({ modal, setModal, onConfirm }) {
+export function Modal({ modal, setModal, onConfirm, confirmText }) {
   if (!modal.isOpen) return null;
 
   return (
@@ -31,7 +31,7 @@ export function Modal({ modal, setModal, onConfirm }) {
                 onClick={onConfirm}
                 className="flex-1 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 cursor-pointer"
               >
-                Logout
+                {confirmText ?? "Logout"}
               </button>
             </>
           ) : (
