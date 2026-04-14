@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LogInPage } from './pages/LogInPage';
 import  SignUpPage1  from './pages/SignUpPage1';
 import  SignUpPage2  from './pages/SignUpPage2';
@@ -10,18 +11,21 @@ import './App.css'
 
 function App() {
 
-  return (
-    <Routes>
+  const queryClient = new QueryClient();
 
-      {/* <Route index element={<LandingPage />} /> */}
-      <Route path='/login' element={<LogInPage />} />
-      <Route path='/signup1' element={<SignUpPage1 />} />
-      <Route path='/signup2' element={<SignUpPage2 />} />
-      <Route path='/signup3-employee' element={<SignUpPage3_Employee />} />
-      <Route path='/signup3-organization' element={<SignUpPage3_Organization />} />
-      <Route path='/forgotpassword' element={<ResetPasswordPage />} />
-      <Route path='/organization/dashboard' element={<Main />} />
-    </Routes>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        {/* <Route index element={<LandingPage />} /> */}
+        <Route path='/login' element={<LogInPage />} />
+        <Route path='/signup1' element={<SignUpPage1 />} />
+        <Route path='/signup2' element={<SignUpPage2 />} />
+        <Route path='/signup3-employee' element={<SignUpPage3_Employee />} />
+        <Route path='/signup3-organization' element={<SignUpPage3_Organization />} />
+        <Route path='/forgotpassword' element={<ResetPasswordPage />} />
+        <Route path='/organization/dashboard' element={<Main />} />
+      </Routes>
+    </QueryClientProvider>
   )
 }
 

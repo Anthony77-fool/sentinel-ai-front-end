@@ -142,3 +142,25 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+/* Target the scrollbar globally or just for specific containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;               /* Very thin for a sleek look */
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;   /* Makes the track invisible until hovered */
+  margin-block: 10px;        /* Adds space at the top/bottom of the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E5E7EB;       /* Light gray by default */
+  border-radius: 20px;       /* Makes it a pill shape */
+  transition: background 0.3s ease;
+}
+
+/* Senior Touch: Change color when the user interacts with it */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #89A1EF;       /* SentinelAI Blue on hover */
+}

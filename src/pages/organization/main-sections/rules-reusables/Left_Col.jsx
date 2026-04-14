@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"; 
 import { useState } from "react";
 import { 
   IoCloudUploadOutline, 
@@ -7,6 +8,9 @@ import {
 import { Modal } from "../../../../components/organization/Modal";
 
 export function Left_Col() {
+    // Senior Comment: Initializing the query client to handle cache invalidation
+    const queryClient = useQueryClient();
+
     const [activeTab, setActiveTab] = useState("text");
     const [isLoading, setIsLoading] = useState(false);
     
@@ -46,7 +50,7 @@ export function Left_Col() {
       };
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rules`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/rules_add`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -59,6 +63,9 @@ export function Left_Col() {
         const data = await response.json();
 
         if (response.ok) {
+          // Senior Comment: Triggering a background re-fetch of the governance feed
+          queryClient.invalidateQueries({ queryKey: ["governance-rules"] });
+
           // Senior Comment: Clear form first to provide immediate visual feedback
           setRuleName("");
           setBehavioralGuidance("");
