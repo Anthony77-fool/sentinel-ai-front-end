@@ -18,23 +18,29 @@ export function Modal({ modal, setModal, onConfirm, confirmText }) {
         <p className="text-slate-500 mt-2 text-sm leading-relaxed">{modal.message}</p>
         
         <div className="flex gap-3 mt-6">
-          {/* If it's a danger/confirm modal, show two buttons */}
-          {modal.isDanger ? (
+          {/* Logic: Only show Action buttons (Cancel/Confirm) if:
+            1. onConfirm exists AND
+            2. It's NOT a success modal
+          */}
+          {onConfirm && !modal.isSuccess ? (
             <>
               <button 
                 onClick={() => setModal({ ...modal, isOpen: false })}
-                className="flex-1 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors cursor-pointer"
+                className="flex-1 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200"
               >
                 Cancel
               </button>
               <button 
                 onClick={onConfirm}
-                className="flex-1 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 cursor-pointer"
+                className={`flex-1 py-3 text-white font-semibold rounded-xl transition-colors shadow-lg ${
+                  modal.isDanger ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20' : 'bg-[#89A1EF] hover:bg-[#768bd9] shadow-[#89A1EF]/20'
+                }`}
               >
-                {confirmText ?? "Logout"}
+                {confirmText || "Confirm"}
               </button>
             </>
           ) : (
+            /* Feedback / Success Mode: Only show "Got it" */
             <button 
               onClick={() => setModal({ ...modal, isOpen: false })}
               className="w-full py-3 bg-[#89A1EF] text-white font-semibold rounded-xl hover:bg-[#768bd9] transition-colors shadow-lg shadow-[#89A1EF]/20 cursor-pointer"
