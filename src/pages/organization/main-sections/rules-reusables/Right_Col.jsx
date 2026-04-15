@@ -59,6 +59,17 @@ export function Right_Col() {
 
       if (response.ok) {
         queryClient.invalidateQueries({ queryKey: ["governance-rules"] });
+
+        // Trigger the Success Reminder
+        setConfirmModal({
+          isOpen: true,
+          title: "Rule Removed",
+          message: "The rule was deleted locally. Remember to click 'Push Changes to Agent' to apply this update to the SentinelAI core.",
+          isDanger: false, // This will switch the button to the "Got it" style
+          isSuccess: true, // This shows the green checkmark icon
+          ruleId: null
+        });
+
       }
     } catch (error) {
       console.error("Delete failed:", error);
@@ -101,7 +112,8 @@ export function Right_Col() {
         body: JSON.stringify({
           name: selectedRule.name,
           definition: selectedRule.definition,
-          type: selectedRule.type
+          type: selectedRule.type,
+          status: 'pending' //always be changed to pending if edited
         })
       });
 
