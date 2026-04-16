@@ -8,6 +8,7 @@ import {
   IoAddOutline
 } from "react-icons/io5";
 import { SiGooglegemini } from "react-icons/si";
+import DynamicChatbot from "./ai-tools-reusables/DynamicChatbot";
 
 const CATEGORIES = ["All Categories", "Internal", "Public-Facing", "Experimental"];
 
@@ -36,6 +37,21 @@ export default function AiTools({ sidebarCollapsed }) {
     const matchesCategory = selectedCategory === "All Categories" || bot.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // 1. Add this state at the top of your function
+  const [activeBot, setActiveBot] = useState(null);
+
+  // 2. Add this condition at the very beginning of your return
+  if (activeBot) {
+    return (
+      <div className={`transition-all duration-300 mt-16 p-6 min-h-screen ${sidebarCollapsed ? "ml-16" : "ml-56"}`}>
+        <DynamicChatbot 
+          botName={activeBot.name} 
+          onBack={() => setActiveBot(null)} 
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`transition-all duration-300 mt-16 p-6 min-h-screen ${sidebarCollapsed ? "ml-16" : "ml-56"}`}>
@@ -129,7 +145,9 @@ export default function AiTools({ sidebarCollapsed }) {
                 <span className="text-[11px] font-medium font-mono">3.1 Flash Lite</span>
               </div>
               
-              <button className="px-5 py-2 bg-[#89A1EF] text-white text-[12px] font-bold rounded-xl hover:bg-[#768bd9] active:scale-95 transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
+              <button 
+              onClick={() => setActiveBot(bot)}
+              className="px-5 py-2 bg-[#89A1EF] text-white text-[12px] font-bold rounded-xl hover:bg-[#768bd9] active:scale-95 transition-all shadow-lg shadow-[#89A1EF]/20 cursor-pointer">
                 Enter Chat
               </button>
             </div>
