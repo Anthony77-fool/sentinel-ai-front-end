@@ -134,7 +134,7 @@ export default function DynamicChatbot({ botName, onBack }) {
       </div>
 
       {/* ── Messages Area ── */}
-      <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-gray-50/30">
+      <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-gray-50/30 custom-scrollbar">
         {isInitialLoading ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
             <SiGooglegemini className="animate-spin size-6" />
