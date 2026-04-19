@@ -3,6 +3,45 @@ import { IoSend, IoArrowBack, IoSparklesOutline, IoPersonOutline } from "react-i
 import { SiGooglegemini } from "react-icons/si";
 
 export default function DynamicChatbot({ botName, onBack }) {
+
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/chat_history/${botName}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const historyData = await response.json();
+          
+          // Transform the DB rows: 1 row -> 2 messages (User & Assistant)
+          const formattedMessages = [];
+          historyData.forEach(session => {
+            formattedMessages.push({ role: "user", content: session.raw_input });
+            formattedMessages.push({ role: "assistant", content: session.ai_response });
+          });
+
+          // Only set history if it exists, otherwise keep the default welcome message
+          if (formattedMessages.length > 0) {
+            setMessages(formattedMessages);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load history:", error);
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+
+    loadChatHistory();
+  }, [botName]); // Re-runs if the bot name changes
+
   const [messages, setMessages] = useState([
     { role: "assistant", content: `Hello! I am ${botName || 'your AI assistant'}. How can I help you today?` }
   ]);
@@ -96,21 +135,29 @@ export default function DynamicChatbot({ botName, onBack }) {
 
       {/* ── Messages Area ── */}
       <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-gray-50/30">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`flex gap-3 max-w-[80%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-              <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 border 
-                ${msg.role === "user" ? "bg-white text-gray-400" : "bg-gradient-to-br from-[#89A1EF]/10 to-[#89A1EF]/5 rounded-xl border-[#89A1EF]/20 text-[#89A1EF]"}`}>
-                {msg.role === "user" ? <IoPersonOutline /> : <SiGooglegemini />}
-              </div>
-              <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm
-                ${msg.role === "user" ? "bg-[#89A1EF] text-white rounded-tr-none" : "bg-white text-gray-700 border border-gray-100 rounded-tl-none"}`}>
-                {msg.content}
+        {isInitialLoading ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
+            <SiGooglegemini className="animate-spin size-6" />
+            <span className="text-xs font-medium">Retrieving secure conversation...</span>
+          </div>
+        ) : (
+          messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`flex gap-3 max-w-[80%] ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 border 
+                  ${msg.role === "user" ? "bg-white text-gray-400" : "bg-gradient-to-br from-[#89A1EF]/10 to-[#89A1EF]/5 rounded-xl border-[#89A1EF]/20 text-[#89A1EF]"}`}>
+                  {msg.role === "user" ? <IoPersonOutline /> : <SiGooglegemini />}
+                </div>
+                <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm
+                  ${msg.role === "user" ? "bg-[#89A1EF] text-white rounded-tr-none" : "bg-white text-gray-700 border border-gray-100 rounded-tl-none"}`}>
+                  {msg.content}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        {/* Loading Indicator */}
+          ))
+        )}
+
+        {/* Loading Indicator for new messages */}
         {isLoading && (
           <div className="flex justify-start">
             <div className="flex gap-3 items-center text-xs text-gray-400 animate-pulse">
