@@ -7,27 +7,64 @@ export default function DynamicChatbot({ botName, onBack }) {
     { role: "assistant", content: `Hello! I am ${botName || 'your AI assistant'}. How can I help you today?` }
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  //Handle send
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
-    const userMsg = { role: "user", content: input };
+    const currentInput = input;
+    const userMsg = { role: "user", content: currentInput };
+    
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Get the token exactly like your working 'deploy' function
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/sentinel_chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}` // <--- THIS WAS THE MISSING LINK
+        },
+        body: JSON.stringify({
+          chatInput: currentInput,
+          botName: botName || "SentinelBot"
+        })
+      });
+
+      // If Laravel sends a 401 now, it's because the token in localStorage expired
+      if (response.status === 401) {
+          throw new Error("Session expired. Please log in again.");
+      }
+
+      const data = await response.json();
+
+      // Access the data through the 'data' wrapper if you use a Laravel Resource
+      const aiContent = data.data ? data.data.ai_response : data.ai_response;
+
       setMessages((prev) => [
         ...prev, 
-        { role: "assistant", content: `I've received your message regarding "${input}". As a SentinelAI protected interface, I'm analyzing your request...` }
+        { role: "assistant", content: aiContent }
       ]);
-    }, 1000);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setMessages((prev) => [
+        ...prev, 
+        { role: "assistant", content: error.message || "Error: Could not reach Agent. Please check your connection." }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,6 +110,14 @@ export default function DynamicChatbot({ botName, onBack }) {
             </div>
           </div>
         ))}
+        {/* Loading Indicator */}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="flex gap-3 items-center text-xs text-gray-400 animate-pulse">
+              <SiGooglegemini className="animate-spin" /> Sentinel is analyzing...
+            </div>
+          </div>
+        )}
         <div ref={scrollRef} />
       </div>
 
@@ -81,21 +126,23 @@ export default function DynamicChatbot({ botName, onBack }) {
         <div className="relative flex items-center gap-2 max-w-4xl mx-auto">
           <input
             type="text"
+            disabled={isLoading}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSend()}
-            placeholder={`Message ${botName}...`}
-            className="w-full pl-5 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#89A1EF]/20 transition-all"
+            placeholder={isLoading ? "Processing..." : `Message ${botName}...`}
+            className="w-full pl-5 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#89A1EF]/20 transition-all disabled:opacity-50"
           />
           <button 
             onClick={handleSend}
-            className="absolute right-2 p-2.5 bg-[#89A1EF] text-white rounded-xl hover:bg-[#768bd9] transition-all shadow-lg shadow-[#89A1EF]/20 active:scale-95"
+            disabled={isLoading || !input.trim()}
+            className="absolute right-2 p-2.5 bg-[#89A1EF] text-white rounded-xl hover:bg-[#768bd9] transition-all shadow-lg shadow-[#89A1EF]/20 active:scale-95 disabled:grayscale"
           >
             <IoSend className="size-4" />
           </button>
         </div>
         <p className="text-[10px] text-center text-gray-400 mt-3 flex items-center justify-center gap-1">
-          <IoSparklesOutline /> Gemini may provide inaccurate info. SentinelAI filters PII.
+          <span className="flex items-center gap-1"><IoSparklesOutline /> Gemini may provide inaccurate info. SentinelAI filters PII.</span>
         </p>
       </div>
     </div>
