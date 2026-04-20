@@ -56,11 +56,11 @@ export function Employee_Table({ filteredEmployees }) {
                       {emp.risk}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  {/*<td className="px-6 py-4 text-right">
                     <button className="p-1.5 text-gray-400 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 rounded-lg transition-all cursor-pointer">
                       <IoEllipsisVertical className="size-4" />
                     </button>
-                  </td>
+                  </td>*/}
                 </tr>
               ))}
             </tbody>

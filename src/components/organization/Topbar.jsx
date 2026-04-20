@@ -5,6 +5,18 @@
 export default function Topbar({ sidebarCollapsed = false }) {
   const leftClass = sidebarCollapsed ? "left-16" : "left-56";
 
+    // 1. Get User Data from LocalStorage
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+
+  // 2. Helper to get Initials (e.g., "Marck Sabado" -> "MS")
+  const getInitials = () => {
+    if (!user) return "??";
+    const f = user.firstName?.charAt(0) || "";
+    const l = user.lastName?.charAt(0) || "";
+    return (f + l).toUpperCase();
+  };
+
   return (
     <header
       className={`fixed top-0 right-0 ${leftClass} h-16 z-20 flex items-center gap-4 px-6
@@ -66,7 +78,7 @@ export default function Topbar({ sidebarCollapsed = false }) {
       <div className="w-9 h-9 rounded-full bg-[#89A1EF]/10 border-2 border-[#89A1EF]/25
                       flex items-center justify-center cursor-pointer
                       hover:border-[#89A1EF]/60 transition-colors shadow-sm">
-        <span className="text-[11px] font-bold text-[#89A1EF] font-mono">AD</span>
+        <span className="text-[11px] font-bold text-[#89A1EF] font-mono">{getInitials()}</span>
       </div>
     </header>
   );

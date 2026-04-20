@@ -6,7 +6,7 @@ import {
 
 import Card from "../../../../components/organization/Card";
 
-export function Employee_Overview({ INITIAL_EMPLOYEES }) {
+export function Employee_Overview({ stats }) {
 
   return (
 
@@ -15,17 +15,17 @@ export function Employee_Overview({ INITIAL_EMPLOYEES }) {
       {/* ── Employee Overview ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card 
-          title="Registered Accounts"
-          value={INITIAL_EMPLOYEES.length.toString()}
+          title="Total Registered Accounts"
+          value={stats.total.toString()}
           icon={<IoPeopleOutline />}
-          trend="+4"
+          trend={`+${stats.total.toString()}`}
           trendUp={true}
           sub="joined this month"
           sparkData={[10, 15, 12, 20, 25, 30, 35]} // Showing registration growth
         />
         <Card 
           title="Active Now"
-          value="2"
+          value={stats.active_now.toString()}
           icon={<IoPulseOutline />}
           trend="Steady"
           trendUp={true}
@@ -34,7 +34,7 @@ export function Employee_Overview({ INITIAL_EMPLOYEES }) {
         />
         <Card 
           title="New Registrations"
-          value="1"
+          value={stats.new_today.toString()}
           icon={<IoAddOutline />}
           trend="Today"
           trendUp={true}
