@@ -18,6 +18,18 @@ const IconPH = ({ size = "w-4 h-4" }) => (
 
 export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollapsed }) {
 
+  // 1. Get User Data from LocalStorage
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+
+  // 2. Helper to get Initials (e.g., "Marck Sabado" -> "MS")
+  const getInitials = () => {
+    if (!user) return "??";
+    const f = user.firstName?.charAt(0) || "";
+    const l = user.lastName?.charAt(0) || "";
+    return (f + l).toUpperCase();
+  };
+
   return (
     <>
       <aside
@@ -38,11 +50,18 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
               {/* IMAGE_PLACEHOLDER: AVATAR */}
               <div className="w-8 h-8 rounded-full bg-[#89A1EF]/10 border border-[#89A1EF]/25
                               flex items-center justify-center flex-shrink-0">
-                <span className="text-[10px] font-bold text-[#89A1EF] font-mono">AD</span>
+                {/* DYNAMIC INITIALS */}
+                <span className="text-[10px] font-bold text-[#89A1EF] font-mono">{getInitials()}</span>
               </div>
               <div className="overflow-hidden">
-                <p className="text-xs font-semibold text-gray-800 truncate">Admin User</p>
-                <p className="text-[10px] text-gray-400 truncate">Super Admin</p>
+                {/* DYNAMIC NAME */}
+                <p className="text-xs font-semibold text-gray-800 truncate">
+                  {user ? `${user.firstName} ${user.lastName || ""}` : "Guest User"}
+                </p>
+                {/* DYNAMIC ROLE */}
+                <p className="text-[10px] text-gray-400 truncate">
+                  Business Admin
+                </p>
               </div>
             </div>
           )}
