@@ -37,7 +37,7 @@ import Table from "../../../components/organization/Table";
 /* ─────────────────────────────────────────────────────
    Main export
 ───────────────────────────────────────────────────── */
-export default function Dashboard({ sidebarCollapsed = false }) {
+export default function Dashboard({ sidebarCollapsed = false, setActiveNav }) {
   const leftClass = sidebarCollapsed ? "ml-16" : "ml-56";
 
   //backend api to get all the data from index
@@ -191,7 +191,7 @@ export default function Dashboard({ sidebarCollapsed = false }) {
 
       {/* ── Table + side panels ── */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_272px] gap-3">
-        <Table />
+        <Table setActiveNav={setActiveNav} />
         <div className="flex flex-col gap-3">
           <QuickActions QUICK_ACTIONS={QUICK_ACTIONS} />
           <SystemStatus SYSTEM_STATUS={SYSTEM_STATUS} />

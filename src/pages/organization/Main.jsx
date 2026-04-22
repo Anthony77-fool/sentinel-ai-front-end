@@ -17,7 +17,7 @@ export default function Main() {
   const renderSection = () => {
     switch (activeNav) {
       case "dashboard":
-        return <Dashboard sidebarCollapsed={sidebarCollapsed} />;
+        return <Dashboard sidebarCollapsed={sidebarCollapsed} setActiveNav={setActiveNav} />;
       case "ai-tools":
         return <AiTools sidebarCollapsed={sidebarCollapsed} />;
       case "employees":
