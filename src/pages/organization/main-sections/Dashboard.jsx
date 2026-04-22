@@ -8,6 +8,7 @@ import {
   IoBanOutline,
   IoSparklesOutline
 } from "react-icons/io5";
+import { SiGooglegemini } from "react-icons/si";
 
 const QUICK_ACTIONS = [
   { label:"Approve Accounts", sub:"7 pending",    icon:"✓" },
@@ -39,6 +40,7 @@ import Table from "../../../components/organization/Table";
 export default function Dashboard({ sidebarCollapsed = false }) {
   const leftClass = sidebarCollapsed ? "ml-16" : "ml-56";
 
+  //backend api to get all the data from index
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
@@ -50,10 +52,10 @@ export default function Dashboard({ sidebarCollapsed = false }) {
     }
   });
 
-const stats = data?.stats;
-const trends = data?.trends || [0, 0, 0, 0, 0, 0, 0];
+  const stats = data?.stats;
+  const trends = data?.trends || [0, 0, 0, 0, 0, 0, 0];
 
-const STAT_CARDS = [
+  const STAT_CARDS = [
     { 
       title: "Monitored Employees", 
       value: stats?.total_employees || "0", 
@@ -91,6 +93,62 @@ const STAT_CARDS = [
     },
   ];
 
+  const usageChartData = {
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    datasets: [
+      {
+        label: "AI Requests",
+        data: data?.charts?.usage || [0, 0, 0, 0, 0, 0, 0], // Live data from backend
+        fill: true,
+        borderColor: "#89A1EF",
+        backgroundColor: "rgba(137, 161, 239, 0.1)",
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const reportChartData = {
+    labels: data?.charts?.reports?.labels || ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    datasets: [
+      {
+        label: "Reports",
+        data: data?.charts?.reports?.data || [],
+        backgroundColor: "#89A1EF",
+        borderRadius: 6,
+      },
+      {
+        label: "Resolved",
+        data: data?.charts?.reports?.resolved || [],
+        backgroundColor: "#94A3B8",
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const violationChartData = {
+    labels: data?.charts?.violations?.labels || [],
+    datasets: [
+      {
+        data: data?.charts?.violations?.values || [],
+        backgroundColor: ["#89A1EF", "#FCA5A5", "#94A3B8", "#64748B"],
+        hoverOffset: 4,
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  // ── IMPLEMENTATION OF ISLOADING ──
+  if (isLoading) return (
+    <div className={`${leftClass} mt-16 h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50`}>
+       <div className="flex flex-col items-center gap-3">
+        <SiGooglegemini className="animate-spin size-10 text-[#89A1EF]" />
+        <p className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase animate-pulse">
+          Initializing Sentinel Node...
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <main
       className={`${leftClass} mt-16 min-h-[calc(100vh-64px)] bg-[#F8FAFC]
@@ -111,9 +169,24 @@ const STAT_CARDS = [
 
       {/* ── Charts ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mb-6">
-        <ChartCard title="AI Usage Over Time"  type="LINE" period="Weekly" />
-        <ChartCard title="Reports vs Resolved" type="BAR"  period="Monthly" />
-        <ChartCard title="Violation Types"     type="PIE"  period="All time" />
+        <ChartCard 
+          title="AI Usage Over Time" 
+          type="LINE" 
+          period="Weekly" 
+          chartData={usageChartData} 
+        />
+        <ChartCard 
+          title="Reports vs Resolved" 
+          type="BAR" 
+          period="Monthly" 
+          chartData={reportChartData} 
+        />
+        <ChartCard 
+          title="Violation Types" 
+          type="PIE" 
+          period="All time" 
+          chartData={violationChartData} 
+        />
       </div>
 
       {/* ── Table + side panels ── */}
