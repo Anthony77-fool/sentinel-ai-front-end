@@ -6,10 +6,8 @@ import Topbar    from "../../components/employee/Topbar";
 
 import EmployeeDashboard from "./main-sections/EmployeeDashboard";
 import AiTools   from "./main-sections/AiTools"; 
-import MyStatus from "./main-sections/MyStatus";/*
-import Rules from "./main-sections/Rules";
-import Penalties from "./main-sections/Penalties";
-*/
+import MyStatus from "./main-sections/MyStatus";
+import CompanyGuidelines from "./main-sections/CompanyGuidelines";
 
 export default function EmployeeMain() {
   const [activeNav, setActiveNav] = useState("dashboard");
