@@ -56,7 +56,7 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
                   {user ? `${user.firstName} ${user.lastName || ""}` : "Guest User"}
                 </p>
                 {/* UPDATED ROLE FOR EMPLOYEE SIDEBAR */}
-                <p className="text-[10px] text-gray-400 truncate uppercase tracking-tighter font-bold">
+                <p className="text-[10px] text-gray-400 truncate">
                   Employee
                 </p>
               </div>
