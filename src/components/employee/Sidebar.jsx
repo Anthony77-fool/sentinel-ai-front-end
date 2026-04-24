@@ -3,7 +3,7 @@ import React from "react";
 //section imports
 import { Logo } from "./sidebar-sections/Logo";
 import { Nav } from "./sidebar-sections/Nav";
-//import { UserActions } from "./sidebar-sections/UserActions";
+import { UserActions } from "./sidebar-sections/UserActions";
 
 /* ── Tiny square icon placeholder ── */
 const IconPH = ({ size = "w-4 h-4" }) => (
@@ -64,7 +64,7 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
           )}
 
           {/* ── User Actions ─────────────────────────────────────── */}
-          {/*<UserActions collapsed={collapsed} />*/}
+          <UserActions collapsed={collapsed} />
         </div>
       </aside>
     </>
