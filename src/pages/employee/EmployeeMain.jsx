@@ -5,8 +5,8 @@ import Topbar    from "../../components/employee/Topbar";
 // Import your sections
 
 import EmployeeDashboard from "./main-sections/EmployeeDashboard";
-import AiTools   from "./main-sections/AiTools"; /*
-import EmployeeDashboard from "./main-sections/Employee";
+import AiTools   from "./main-sections/AiTools"; 
+import MyStatus from "./main-sections/MyStatus";/*
 import Rules from "./main-sections/Rules";
 import Penalties from "./main-sections/Penalties";
 */

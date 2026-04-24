@@ -104,7 +104,7 @@ export default function EmployeeDashboard({ sidebarCollapsed, user }) {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-800">Sentinel Gemini Interface</h4>
-                  <p className="text-xs text-gray-400">Enterprise Edition • v1.5</p>
+                  <p className="text-xs text-gray-400">Enterprise Edition • v3.1</p>
                 </div>
               </div>
               <IoChevronForwardOutline className="text-gray-300 group-hover:text-[#89A1EF] transition-all" />
