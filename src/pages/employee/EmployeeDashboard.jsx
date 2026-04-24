@@ -1,16 +1,27 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { 
   IoChatbubblesOutline, 
   IoShieldCheckmarkOutline, 
   IoDocumentLockOutline, 
   IoInformationCircleOutline,
-  IoRocketOutline
+  IoRocketOutline,
+  IoChevronForwardOutline
 } from "react-icons/io5";
 import { SiGooglegemini } from "react-icons/si";
 
-export default function EmployeeDashboard({ sidebarCollapsed }) {
-  // We can simulate a "New Account" state to show a welcome banner
-  const isNewUser = true; 
+export default function EmployeeDashboard({ sidebarCollapsed, user }) {
+  // ── Fetch only THIS employee's stats ──
+  const { data: stats } = useQuery({
+    queryKey: ["employee-stats"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/employee/dashboard-stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return res.json();
+    }
+  });
 
   return (
     <div className={`mt-16 transition-all duration-300 p-6 min-h-screen ${sidebarCollapsed ? "ml-16" : "ml-56"}`}>
@@ -18,106 +29,118 @@ export default function EmployeeDashboard({ sidebarCollapsed }) {
       {/* ── Welcome Header ── */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-          Welcome back, Anthony!
+          Welcome back, {user?.first_name || "User"}!
         </h1>
         <p className="text-sm text-gray-500 mt-1">
           Your secure gateway to organization-approved AI tools.
         </p>
       </div>
 
-      {/* ── New Account Onboarding Banner ── */}
-      {isNewUser && (
-        <div className="mb-8 bg-gradient-to-r from-[#89A1EF] to-[#768bd9] rounded-2xl p-6 text-white shadow-lg shadow-[#89A1EF]/20 relative overflow-hidden">
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 backdrop-blur-md rounded-xl">
-                <IoRocketOutline className="size-8" />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold">Getting Started with SentinelAI</h2>
-                <p className="text-white/80 text-sm max-w-md">
-                  Your account is active. You can now use the Gemini Chatbot securely. SentinelAI automatically masks sensitive data to keep our company safe.
-                </p>
-              </div>
+      {/* ── Welcome Banner ── */}
+      <div className="mb-8 bg-gradient-to-r from-[#89A1EF] to-[#768bd9] rounded-2xl p-6 text-white shadow-lg shadow-[#89A1EF]/20 relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-md rounded-xl">
+              <IoRocketOutline className="size-8" />
             </div>
-            <button className="px-6 py-2.5 bg-white text-[#89A1EF] font-bold rounded-xl hover:bg-gray-50 transition-colors whitespace-nowrap">
-              Take a Tour
+            <div>
+              <h2 className="text-lg font-bold">Safe AI Usage Active</h2>
+              <p className="text-white/80 text-sm max-w-md">
+                You are currently in **Protected Mode**. Every interaction is automatically scrubbed of sensitive data before reaching the AI model.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-5 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold text-xs rounded-xl transition-all">
+              Guidelines
+            </button>
+            <button className="px-5 py-2 bg-white text-[#89A1EF] font-bold text-xs rounded-xl hover:shadow-lg transition-all">
+              Launch Gemini
             </button>
           </div>
-          {/* Decorative Circle */}
-          <div className="absolute -right-10 -bottom-10 size-40 bg-white/10 rounded-full blur-3xl" />
         </div>
-      )}
+        <div className="absolute -right-10 -bottom-10 size-40 bg-white/10 rounded-full blur-3xl" />
+      </div>
 
-      {/* ── Quick Stats Grid ── */}
+      {/* ── Quick Stats ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatTile 
           icon={<IoChatbubblesOutline />} 
-          label="My Chat Sessions" 
-          value="12" 
-          sub="Total this month" 
+          label="My Active Sessions" 
+          value={stats?.total_sessions || "0"} 
+          sub="Logs generated" 
         />
         <StatTile 
           icon={<IoShieldCheckmarkOutline />} 
           label="Security Status" 
-          value="Protected" 
-          sub="PII Masking Active" 
+          value="Secured" 
+          sub="Auto-Masking On" 
           isStatus 
         />
         <StatTile 
           icon={<IoDocumentLockOutline />} 
           label="Compliance Score" 
-          value="98%" 
-          sub="Good standing" 
+          value={`${stats?.compliance_score || "100"}%`} 
+          sub="Health rating" 
         />
       </div>
 
-      {/* ── Main Layout: Tools & Recent Activity ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Available Chatbots */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-gray-800">Your AI Workspaces</h3>
-            <button className="text-xs font-bold text-[#89A1EF] hover:underline">View All</button>
-          </div>
-
-          {/* Gemini Card for Employee */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:border-[#89A1EF]/40 transition-all group">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-[#89A1EF]/10 rounded-xl text-[#89A1EF] border border-[#89A1EF]/10">
-                <SiGooglegemini className="size-6" />
+        {/* Main: Workspace & Activity */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          <section>
+            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              Approved Workspaces
+            </h3>
+            <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all group cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-[#89A1EF]/10 rounded-xl text-[#89A1EF]">
+                  <SiGooglegemini className="size-6" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-800">Sentinel Gemini Interface</h4>
+                  <p className="text-xs text-gray-400">Enterprise Edition • v1.5</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-gray-800">Gemini Pro Chat</h4>
-                <p className="text-xs text-gray-400">Policy-compliant assistant</p>
-              </div>
+              <IoChevronForwardOutline className="text-gray-300 group-hover:text-[#89A1EF] transition-all" />
             </div>
-            <button className="px-4 py-2 bg-gray-50 text-gray-600 font-bold text-xs rounded-xl group-hover:bg-[#89A1EF] group-hover:text-white transition-all cursor-pointer">
-              Open Chat
-            </button>
-          </div>
+          </section>
+
+          {/* User's Own Recent Activity (Filtered just for them) */}
+          <section>
+            <h3 className="font-bold text-gray-800 mb-4">Your Recent Interactions</h3>
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+               <div className="p-10 text-center text-gray-400 text-xs italic">
+                 Your interaction logs will appear here as you use AI tools.
+               </div>
+            </div>
+          </section>
         </div>
 
-        {/* Security & Monitoring Info (The "Monitor" Aspect) */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-4 text-[#89A1EF]">
-            <IoInformationCircleOutline className="size-5" />
-            <h3 className="font-bold text-gray-800 text-sm">Monitoring Notice</h3>
+        {/* Sidebar Info */}
+        <div className="space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4 text-[#89A1EF]">
+              <IoInformationCircleOutline className="size-5" />
+              <h3 className="font-bold text-gray-800 text-sm">Security Policy</h3>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed mb-4">
+              SentinelAI prevents accidental leaks of PII (Names, Emails, Passwords). All data remains within organization bounds.
+            </p>
+            <ul className="space-y-3">
+              <MonitorItem label="Anonymization" status="Active" />
+              <MonitorItem label="Session ID" status={`#${user?.id || '000'}`} />
+              <MonitorItem label="Audit Visibility" status="Restricted" />
+            </ul>
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed mb-4">
-            To maintain digital integrity, your interactions with AI tools are monitored for sensitive data leakage (PII). 
-          </p>
-          <ul className="space-y-3">
-            <MonitorItem label="Data Anonymization" status="Enabled" />
-            <MonitorItem label="Interaction Logging" status="Enabled" />
-            <MonitorItem label="Policy Violation Check" status="Real-time" />
-          </ul>
         </div>
       </div>
     </div>
   );
 }
+
+// Subcomponents... (use the ones from your existing code)
 
 /* ── Sub-components for cleaner code ── */
 
