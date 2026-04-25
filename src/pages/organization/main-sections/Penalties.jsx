@@ -31,6 +31,7 @@ export default function Penalties({ sidebarCollapsed }) {
         }
       });
       const json = await response.json();
+
       if (json.error) throw new Error(json.error);
       return json;
     },

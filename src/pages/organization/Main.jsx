@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import Sidebar   from "../../components/organization/Sidebar";
 import Topbar    from "../../components/organization/Topbar";
 
@@ -12,6 +13,17 @@ import Penalties from "./main-sections/Penalties";
 export default function Main() {
   const [activeNav, setActiveNav] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Define a Title Mapping
+  const titles = {
+    dashboard: "Dashboard",
+    "ai-tools": "AI Chat Management",
+    employees: "Employee Overview",
+    rules: "Security Rules",
+    penalties: "Compliance Penalties",
+  };
+
+  const currentSubTitle = titles[activeNav] || "Organization";
 
   // 1. Define a function to decide which section to show
   const renderSection = () => {
@@ -32,23 +44,32 @@ export default function Main() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
-      <Sidebar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        /* To sync the toggle with the Topbar/Dashboard, 
-           make sure your Sidebar component calls:
-           setSidebarCollapsed(!sidebarCollapsed) 
-           whenever its internal toggle button is clicked.
-        */
-        collapsed={sidebarCollapsed}
-        setCollapsed={setSidebarCollapsed}
-      />
+    <>
+      <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
 
-      <Topbar sidebarCollapsed={sidebarCollapsed} />
+        {/*The Dynamic Helmet */}
+        <Helmet>
+          <title>{`SentinelAI | ${currentSubTitle}`}</title>
+          <meta name="description" content={`Managing ${titles[activeNav]} for SentinelAI`} />
+        </Helmet>
 
-      {/* 2. Call the function here to render the active section */}
-      {renderSection()}
-    </div>
+        <Sidebar
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          /* To sync the toggle with the Topbar/Dashboard, 
+            make sure your Sidebar component calls:
+            setSidebarCollapsed(!sidebarCollapsed) 
+            whenever its internal toggle button is clicked.
+          */
+          collapsed={sidebarCollapsed}
+          setCollapsed={setSidebarCollapsed}
+        />
+
+        <Topbar sidebarCollapsed={sidebarCollapsed} />
+
+        {/* 2. Call the function here to render the active section */}
+        {renderSection()}
+      </div>
+    </>
   );
 }
