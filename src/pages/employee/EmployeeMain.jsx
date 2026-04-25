@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import Sidebar   from "../../components/employee/Sidebar";
 import Topbar    from "../../components/employee/Topbar";
 
-// Import your sections
+// Import sections
 import EmployeeDashboard from "./main-sections/EmployeeDashboard";
 import AiTools   from "./main-sections/AiTools"; 
 import MyStatus from "./main-sections/MyStatus";
@@ -23,8 +24,19 @@ export default function EmployeeMain() {
     setPreSelectedBot(botData); // Set the bot info
     setActiveNav("ai-tools");   // Switch to the AI Tools section
   };
+
+  // Define a Title Mapping
+  const titles = {
+    dashboard: "Dashboard",
+    "ai-tools": "AI Chat Management",
+    employees: "Employee Overview",
+    "my-status": "My Status",
+    guidelines: "Company Guidelines",
+  };
+
+  const currentSubTitle = titles[activeNav] || "Organization";
   
-  // 1. Define a function to decide which section to show
+  // Define a function to decide which section to show
   const renderSection = () => {
     switch (activeNav) {
       case "dashboard":
@@ -54,6 +66,13 @@ export default function EmployeeMain() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
+
+      {/*The Dynamic Helmet */}
+      <Helmet>
+        <title>{`SentinelAI | ${currentSubTitle}`}</title>
+        <meta name="description" content={`Managing ${titles[activeNav]} for SentinelAI`} />
+      </Helmet>
+
       <Sidebar
         activeNav={activeNav}
         setActiveNav={setActiveNav}
