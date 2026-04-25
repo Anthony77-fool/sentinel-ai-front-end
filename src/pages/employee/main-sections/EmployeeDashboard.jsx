@@ -14,7 +14,7 @@ import { SideBarInfo } from "./dashboard-reusables/SideBarInfo";
 import { UserActivities } from "./dashboard-reusables/UserActivities";
 import { WelcomeBanner } from "./dashboard-reusables/WelcomeBanner";
 
-export default function EmployeeDashboard({ sidebarCollapsed, user }) {
+export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav ,user }) {
   // ── Fetch only THIS employee's stats ──
   const { data: stats } = useQuery({
     queryKey: ["employee-stats"],
@@ -41,7 +41,7 @@ export default function EmployeeDashboard({ sidebarCollapsed, user }) {
       </div>
 
       {/* ── Welcome Banner ── */}
-      <WelcomeBanner />
+      <WelcomeBanner setActiveNav={setActiveNav} />
 
       {/* ── Quick Stats ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

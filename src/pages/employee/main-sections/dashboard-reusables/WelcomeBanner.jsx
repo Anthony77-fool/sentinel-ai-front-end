@@ -2,7 +2,7 @@ import {
   IoRocketOutline,
 } from "react-icons/io5";
 
-export function WelcomeBanner() {
+export function WelcomeBanner({ setActiveNav }) {
 
   return (
 
@@ -20,11 +20,17 @@ export function WelcomeBanner() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="px-5 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold text-xs rounded-xl transition-all">
+          <button 
+            onClick={() => setActiveNav('guidelines')}
+            className="px-5 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
+          >
             Guidelines
           </button>
-          <button className="px-5 py-2 bg-white text-[#89A1EF] font-bold text-xs rounded-xl hover:shadow-lg transition-all">
-            Launch Gemini
+          <button 
+            onClick={() => setActiveNav("ai-tools")}
+            className="px-5 py-2 bg-white text-[#89A1EF] font-bold text-xs rounded-xl hover:shadow-lg transition-all cursor-pointer"
+          >
+            Launch AI Tools
           </button>
         </div>
       </div>

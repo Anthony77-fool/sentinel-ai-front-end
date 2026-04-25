@@ -3,7 +3,6 @@ import Sidebar   from "../../components/employee/Sidebar";
 import Topbar    from "../../components/employee/Topbar";
 
 // Import your sections
-
 import EmployeeDashboard from "./main-sections/EmployeeDashboard";
 import AiTools   from "./main-sections/AiTools"; 
 import MyStatus from "./main-sections/MyStatus";
@@ -17,7 +16,10 @@ export default function EmployeeMain() {
   const renderSection = () => {
     switch (activeNav) {
       case "dashboard":
-        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} setActiveNav={setActiveNav} />;
+        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} 
+        setActiveNav={setActiveNav} 
+        
+        />;
       case "ai-tools":
         return <AiTools sidebarCollapsed={sidebarCollapsed} />;
       case "my-status":
@@ -25,7 +27,7 @@ export default function EmployeeMain() {
       case "guidelines":
         return <CompanyGuidelines sidebarCollapsed={sidebarCollapsed} />;
       default:
-        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} />;
+        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} setActiveNav={setActiveNav} />;
     }
   };
   
