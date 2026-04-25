@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   IoChatbubbleEllipsesOutline, 
   IoSearchOutline, 
@@ -26,7 +26,7 @@ const INITIAL_BOTS = [
   }
 ];
 
-export default function AiTools({ sidebarCollapsed }) {
+export default function AiTools({ sidebarCollapsed, initialBot, clearInitialBot }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -39,7 +39,15 @@ export default function AiTools({ sidebarCollapsed }) {
   });
 
   // 1. Add this state at the top of your function
-  const [activeBot, setActiveBot] = useState(null);
+  const [activeBot, setActiveBot] = useState(initialBot || null);
+
+  // 2. Use an effect to reset the pre-selection in the parent
+  // This ensures that if you go back and come again, it doesn't auto-open forever
+  useEffect(() => {
+    if (initialBot) {
+      clearInitialBot();
+    }
+  }, [initialBot, clearInitialBot]);
 
   // 2. Add this condition at the very beginning of your return
   if (activeBot) {

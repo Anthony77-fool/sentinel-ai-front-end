@@ -11,23 +11,43 @@ import CompanyGuidelines from "./main-sections/CompanyGuidelines";
 export default function EmployeeMain() {
   const [activeNav, setActiveNav] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+    // Get User Data from LocalStorage
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+
+  // State to track if we want to launch a specific bot immediately
+  const [preSelectedBot, setPreSelectedBot] = useState(null);
+
+  const handleLaunchBot = (botData) => {
+    setPreSelectedBot(botData); // Set the bot info
+    setActiveNav("ai-tools");   // Switch to the AI Tools section
+  };
   
   // 1. Define a function to decide which section to show
   const renderSection = () => {
     switch (activeNav) {
       case "dashboard":
         return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} 
-        setActiveNav={setActiveNav} 
-        
-        />;
+                  setActiveNav={setActiveNav} 
+                  onLaunchBot={handleLaunchBot}
+                  user={user}
+                />;
       case "ai-tools":
-        return <AiTools sidebarCollapsed={sidebarCollapsed} />;
+        return <AiTools 
+                sidebarCollapsed={sidebarCollapsed} 
+                initialBot={preSelectedBot}
+                clearInitialBot={() => setPreSelectedBot(null)}
+              />;
       case "my-status":
         return <MyStatus sidebarCollapsed={sidebarCollapsed} />;
       case "guidelines":
         return <CompanyGuidelines sidebarCollapsed={sidebarCollapsed} />;
       default:
-        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} setActiveNav={setActiveNav} />;
+        return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} 
+        setActiveNav={setActiveNav} 
+        user={user}
+      />;
     }
   };
   

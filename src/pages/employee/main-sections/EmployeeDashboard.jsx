@@ -14,7 +14,7 @@ import { SideBarInfo } from "./dashboard-reusables/SideBarInfo";
 import { UserActivities } from "./dashboard-reusables/UserActivities";
 import { WelcomeBanner } from "./dashboard-reusables/WelcomeBanner";
 
-export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav ,user }) {
+export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav , onLaunchBot, user }) {
   // ── Fetch only THIS employee's stats ──
   const { data: stats } = useQuery({
     queryKey: ["employee-stats"],
@@ -33,7 +33,7 @@ export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav ,user
       {/* ── Welcome Header ── */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-          Welcome back, {user?.first_name || "User"}!
+          Welcome back, {user ? `${user.firstName}` : "Guest User"}!
         </h1>
         <p className="text-sm text-gray-500 mt-1">
           Your secure gateway to organization-approved AI tools.
@@ -74,7 +74,10 @@ export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav ,user
             <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
               Approved Workspaces
             </h3>
-            <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all group cursor-pointer">
+            <div 
+              onClick={() => onLaunchBot({ name: "Gemini Chatbot", id: "gemini-01" })}
+              className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all group cursor-pointer"
+            >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-[#89A1EF]/10 rounded-xl text-[#89A1EF]">
                   <SiGooglegemini className="size-6" />
