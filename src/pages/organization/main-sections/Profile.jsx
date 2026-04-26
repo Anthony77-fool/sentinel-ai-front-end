@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { 
   IoPersonOutline, 
@@ -13,29 +14,7 @@ import {
   IoPencil,
   IoInformationCircleOutline
 } from "react-icons/io5";
-
-// Mock data based on your table structures
-// In production, this would come from a useQuery hook
-const mockAdminData = {
-  user: {
-    first_name: "Aira",
-    last_name: "Villanueva",
-    email: "aira.villanueva@sentinelai.io",
-    role: "business admin", // hardcoded as requested
-    created_at: "2023-10-15T08:30:00Z",
-    updated_at: "2024-01-20T10:15:00Z",
-    // Adding a placeholder profile picture
-    profile_image: "https://api.dicebear.com/8.x/notionists-neutral/svg?seed=aira&backgroundColor=89A1EF"
-  },
-  organization: {
-    business_name: "SentinelAI Solutions Inc.",
-    founding_date: "2022-05-01",
-    entity_type: "Corporation",
-    address: "MMSU Technopark, City of Batac, Ilocos Norte",
-    created_at: "2022-05-01T09:00:00Z",
-    updated_at: "2023-12-01T14:20:00Z"
-  }
-};
+import { SiGooglegemini } from "react-icons/si";
 
 // Helper component for detail rows
 const DetailRow = ({ icon: Icon, label, value, isDate }) => {
@@ -57,8 +36,36 @@ const DetailRow = ({ icon: Icon, label, value, isDate }) => {
 };
 
 export default function Profile({ sidebarCollapsed }) {
-  // Destructure mock data for easier access
-  const { user, organization } = mockAdminData;
+  // ── TanStack Query Implementation ──
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile-data"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json' 
+        }
+      });
+      if (!response.ok) throw new Error("Failed to fetch profile");
+      return response.json();
+    },
+    staleTime: 1000 * 60 * 10, // Cache for 10 minutes
+  });
+
+  // Loading State
+  if (isLoading) return (
+    <div className="h-screen flex items-center justify-center bg-gray-50">
+      <SiGooglegemini className="animate-spin size-8 text-[#89A1EF]" />
+    </div>
+  );
+
+  // Fallback data if API returns empty
+  const user = profile?.user || {};
+  const organization = profile?.organization || { 
+    business_name: "No Organization Linked", 
+    entity_type: "N/A" 
+  };
 
   return (
     <>
@@ -135,7 +142,7 @@ export default function Profile({ sidebarCollapsed }) {
                     <IoTimeOutline/> Account Created:
                 </p>
                 <p className="text-[10px] text-gray-600 font-mono font-bold">
-                    {new Date(user.created_at).toLocaleDateString('en-CA')}
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString('en-CA') : '---'}
                 </p>
             </div>
           </div>
@@ -183,7 +190,7 @@ export default function Profile({ sidebarCollapsed }) {
                 </div>
             </div>
 
-            {/* System Information Box (DRY Principle) */}
+            {/* System Information Box */}
              <div className="mt-8 p-6 bg-gradient-to-br from-blue-50/80 to-white border border-blue-100/50 rounded-[1.5rem] shadow-inner">
                 <div className="flex gap-4">
                   <IoInformationCircleOutline className="text-[#89A1EF] size-6 shrink-0 mt-0.5" />
