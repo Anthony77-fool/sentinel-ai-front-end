@@ -1,11 +1,72 @@
+import React, { useRef, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; // Add this
 import { 
   IoBusinessOutline, 
   IoTimeOutline,
   IoKeyOutline,
   IoPencil,
 } from "react-icons/io5";
+import { ImageUploadModal } from "../../../../components/organization/ImageModal";
 
 export function LeftCol({ user, organization }){
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // 1. Define the Modal State
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
+
+  // 2. Define the Mutation for the image upload
+  const mutation = useMutation({
+    mutationFn: async (file) => {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("profile_image", file);
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/profile/image`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          // Note: Don't set Content-Type header when sending FormData; 
+          // the browser does it automatically with the boundary string.
+        },
+        body: formData
+      });
+      if (!response.ok) throw new Error("Upload failed");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["profile-data"]);
+      setModal({ ...modal, isOpen: false });
+      setSelectedFile(null);
+    }
+  });
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setModal({
+        isOpen: true,
+        title: "Update Profile Picture",
+        message: "Does this look correct? Your new photo will be visible to everyone in the organization."
+      });
+    }
+  };
+
+  const handleConfirmUpload = () => {
+    if (selectedFile) {
+      mutation.mutate(selectedFile);
+    }
+  };
+
+  const handlePencilClick = () => {
+    fileInputRef.current.click();
+  };
 
   return (
 
@@ -13,17 +74,29 @@ export function LeftCol({ user, organization }){
 
       <div className="xl:col-span-1 space-y-8 sticky top-24">
         <div className="bg-white border border-gray-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
-            {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-[#89A1EF]/5 rounded-full blur-3xl -mr-20 -mt-20" />
+          <div className="absolute top-0 right-0 w-40 h-40 bg-[#89A1EF]/5 rounded-full blur-3xl -mr-20 -mt-20" />
             
-          {/* Profile Image Container */}
           <div className="relative group mb-6">
             <img 
               src={user.profile_image} 
               alt={`${user.first_name} ${user.last_name}`} 
               className="size-32 rounded-full border-4 border-white shadow-xl shadow-[#89A1EF]/20 object-cover ring-2 ring-[#89A1EF]/10"
             />
-            <button className="absolute bottom-1 right-1 bg-[#89A1EF] text-white p-2 rounded-full shadow-lg hover:bg-[#768bd9] transition-all cursor-pointer border-2 border-white">
+            
+            {/* The Hidden Input */}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              className="hidden" 
+              accept="image/*" 
+            />
+
+            {/* 5. The Trigger Button */}
+            <button 
+              onClick={handlePencilClick}
+              className="absolute bottom-1 right-1 bg-[#89A1EF] text-white p-2 rounded-full shadow-lg hover:bg-[#768bd9] transition-all cursor-pointer border-2 border-white"
+            >
                 <IoPencil className="size-4"/>
             </button>
           </div>
@@ -65,6 +138,15 @@ export function LeftCol({ user, organization }){
             </p>
         </div>
       </div>
+
+      {/* RENDER THE MODAL HERE */}
+      <ImageUploadModal 
+        modal={modal}
+        setModal={setModal}
+        selectedImage={selectedFile}
+        onConfirm={handleConfirmUpload}
+        isUploading={mutation.isPending}
+      />
 
     </>
 
