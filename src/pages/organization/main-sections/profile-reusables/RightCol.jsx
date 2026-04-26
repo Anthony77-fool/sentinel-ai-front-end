@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   IoPersonOutline, 
   IoBusinessOutline, 
@@ -7,7 +7,9 @@ import {
   IoLocationOutline,
   IoBriefcaseOutline,
   IoShieldCheckmarkOutline,
-  IoInformationCircleOutline
+  IoInformationCircleOutline,
+  IoPencil,
+  IoEnterOutline,
 } from "react-icons/io5";
 
 // Helper component for detail rows
@@ -30,6 +32,7 @@ const DetailRow = ({ icon: Icon, label, value, isDate }) => {
 };
 
 export function RightCol({ user, organization }) {
+const [isEditingNames, setIsEditingNames] = useState(false);
 
   return (
 
@@ -38,22 +41,55 @@ export function RightCol({ user, organization }) {
       <div className="xl:col-span-2 space-y-8">
                   
         {/* Personal Details Card */}
-        <div className="bg-white border border-gray-200 rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
-            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50">
-                <div className="p-3 bg-[#89A1EF]/10 rounded-xl text-[#89A1EF]">
-                    <IoPersonOutline className="size-6" />
+        <div className="bg-white border border-gray-200 rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden group/card">
+            
+            {/* Card Header Container */}
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-50">
+                <div className="flex items-center gap-3">
+                    <div className="p-3 bg-[#89A1EF]/10 rounded-xl text-[#89A1EF]">
+                        <IoPersonOutline className="size-6" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-gray-800 text-xl tracking-tight">Personal Access Details</h3>
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-tighter mt-0.5">Your SentinelAI Credentials</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="font-bold text-gray-800 text-xl tracking-tight">Personal Access Details</h3>
-                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-tighter mt-0.5">Your SentinelAI Credentials</p>
-                </div>
+
+                {/* ── THE EDIT BUTTON ── */}
+                <button 
+                    onClick={() => setIsEditingNames(!isEditingNames)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 cursor-pointer
+                        ${isEditingNames 
+                            ? "bg-[#89A1EF] text-white shadow-lg shadow-[#89A1EF]/30" 
+                            : "bg-gray-50 text-gray-500 hover:bg-[#89A1EF]/10 hover:text-[#89A1EF]"
+                        }`}
+                >
+                    <IoPencil className={`${isEditingNames ? "size-3" : "size-4"}`} />
+                    <span className="text-xs font-bold uppercase tracking-wider">
+                        {isEditingNames ? "Save Changes" : "Edit Name"}
+                    </span>
+                </button>
             </div>
 
+            {/* Details Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
-                <DetailRow icon={IoPersonOutline} label="First Name" value={user.first_name} />
-                <DetailRow icon={IoPersonOutline} label="Last Name" value={user.last_name} />
+                {/* Pass isEditable prop only to First and Last name */}
+                <DetailRow 
+                    icon={IoPersonOutline} 
+                    label="First Name" 
+                    value={user.first_name} 
+                    isEditable={isEditingNames} 
+                />
+                <DetailRow 
+                    icon={IoPersonOutline} 
+                    label="Last Name" 
+                    value={user.last_name} 
+                    isEditable={isEditingNames} 
+                />
+                
+                {/* These remain static regardless of isEditingNames */}
                 <DetailRow icon={IoMailOutline} label="Email Address" value={user.email} />
-                <DetailRow icon={IoBriefcaseOutline} label="Administrative Role" value={user.role} />
+                <DetailRow icon={IoBriefcaseOutline} label="Administrative Role" value={'Business Admin'} />
             </div>
         </div>
 
@@ -71,6 +107,7 @@ export function RightCol({ user, organization }) {
 
             <div className="space-y-1">
                 <DetailRow icon={IoBusinessOutline} label="Business Name" value={organization.business_name} />
+                <DetailRow icon={IoEnterOutline} label="Join Code" value={organization.join_code} />
                 <DetailRow icon={IoCalendarClearOutline} label="Founding Date" value={organization.founding_date} isDate />
                 <DetailRow icon={IoShieldCheckmarkOutline} label="Entity Type" value={organization.entity_type} />
                 <DetailRow icon={IoLocationOutline} label="Registered Address" value={organization.address} />

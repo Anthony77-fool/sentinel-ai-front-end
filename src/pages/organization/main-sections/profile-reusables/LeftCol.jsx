@@ -35,7 +35,7 @@ export function LeftCol({ user, organization }){
           <div className="inline-flex items-center gap-2 mt-2 px-3.5 py-1.5 bg-[#89A1EF] text-white rounded-full">
             <IoKeyOutline className="size-3.5" />
             <span className="text-[11px] font-extrabold uppercase tracking-widest">
-              {user.role}
+              Business Admin
             </span>
           </div>
 
