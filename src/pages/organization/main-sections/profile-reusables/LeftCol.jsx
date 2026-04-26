@@ -31,6 +31,7 @@ export function LeftCol({ user, organization }){
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
           // Note: Don't set Content-Type header when sending FormData; 
           // the browser does it automatically with the boundary string.
         },
@@ -78,7 +79,7 @@ export function LeftCol({ user, organization }){
             
           <div className="relative group mb-6">
             <img 
-              src={user.profile_image} 
+              src={user.profile_image || 'https://ui-avatars.com/api/?name=' + user.first_name + '+' + user.last_name} 
               alt={`${user.first_name} ${user.last_name}`} 
               className="size-32 rounded-full border-4 border-white shadow-xl shadow-[#89A1EF]/20 object-cover ring-2 ring-[#89A1EF]/10"
             />
