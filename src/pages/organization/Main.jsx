@@ -9,6 +9,7 @@ import AiTools   from "./main-sections/AiTools";
 import EmployeeDashboard from "./main-sections/Employee";
 import Rules from "./main-sections/Rules";
 import Penalties from "./main-sections/Penalties";
+import Profile from "./main-sections/Profile";
 
 export default function Main() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -38,6 +39,8 @@ export default function Main() {
         return <Rules sidebarCollapsed={sidebarCollapsed} />;
       case "penalties":
         return <Penalties sidebarCollapsed={sidebarCollapsed} />;
+      case "profile":
+        return <Profile sidebarCollapsed={sidebarCollapsed} />;
       default:
         return <Dashboard sidebarCollapsed={sidebarCollapsed} />;
     }

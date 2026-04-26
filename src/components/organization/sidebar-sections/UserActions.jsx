@@ -14,7 +14,7 @@ const USER_ACTIONS = [
   { label: "Logout",   icon: <IoLogOutOutline />, isDanger: true },
 ];
 
-export function UserActions ({ collapsed }){
+export function UserActions ({ collapsed, activeNav, setActiveNav }){
     const [isLoading, setIsLoading] = useState(false);
     const [modal, setModal] = useState({
       isOpen: false,
@@ -74,6 +74,7 @@ export function UserActions ({ collapsed }){
         });
       } else {
         // Handle Profile or Settings navigation
+        setActiveNav(item.label.toLowerCase());
         console.log(`Navigating to ${item.label}`);
       }
     };
@@ -90,7 +91,11 @@ export function UserActions ({ collapsed }){
       />
 
       {/* ── Nav ──────────────────────────────────────── */}
-      {USER_ACTIONS.map((item) => (
+      {USER_ACTIONS.map((item) => {
+        // SYNTAX FIX: This logic needs curly braces + return
+        const isActive = activeNav === item.label.toLowerCase();
+
+        return (
           <button
             key={item.label}
             onClick={() => handleActionClick(item)}
@@ -99,11 +104,14 @@ export function UserActions ({ collapsed }){
                         ${collapsed ? "justify-center" : ""}
                         ${item.isDanger 
                           ? "text-gray-500 hover:bg-red-50 hover:text-red-600" 
-                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"}`}
+                          : isActive 
+                            ? "bg-[#89A1EF]/10 text-[#89A1EF] font-bold" // HIGHLIGHT IF ACTIVE
+                            : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"}`}
           >
             {/* DYNAMIC ICON */}
             <div className={`size-5 flex items-center justify-center shrink-0 
-              ${item.isDanger ? "group-hover:text-red-600" : "group-hover:text-gray-800"}`}>
+              ${item.isDanger ? "group-hover:text-red-600" : "group-hover:text-gray-800"}
+              ${isActive && !item.isDanger ? "text-[#89A1EF]" : ""}`}>
               {React.cloneElement(item.icon, { className: "size-full" })}
             </div>
 
@@ -111,13 +119,14 @@ export function UserActions ({ collapsed }){
 
             {collapsed && (
               <span className="absolute left-full ml-2 px-2.5 py-1.5 bg-gray-900 text-white
-                              text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none
-                              group-hover:opacity-100 transition-opacity z-50 shadow-lg">
+                               text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none
+                               group-hover:opacity-100 transition-opacity z-50 shadow-lg">
                 {item.label}
               </span>
             )}
           </button>
-        ))}
+        ); // End of return
+      })}
       
       {/* Place Modal at the bottom of the fragment */}
       <Modal 

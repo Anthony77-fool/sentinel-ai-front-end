@@ -67,7 +67,7 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
           )}
 
           {/* ── User Actions ─────────────────────────────────────── */}
-          <UserActions collapsed={collapsed} />
+          <UserActions collapsed={collapsed} activeNav={activeNav} setActiveNav={setActiveNav} />
         </div>
       </aside>
     </>
