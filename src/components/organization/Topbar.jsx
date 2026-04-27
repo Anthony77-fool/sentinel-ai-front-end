@@ -1,10 +1,47 @@
+import { useState, useEffect } from "react";
 import { useProfile } from "../../utils/useProfile";
+import { db } from "../../firebase-config/Firebase";
+import { collection, query, where, onSnapshot, doc, deleteDoc, orderBy } from "firebase/firestore";
+import NotificationModal from "./NotificationModal";
 
 export default function Topbar({ sidebarCollapsed = false }) {
   const leftClass = sidebarCollapsed ? "left-16" : "left-56";
 
-  //Get User Data from LocalStorage
-  const { data: user, isLoading } = useProfile();
+  const { data: user } = useProfile();
+  const [notifications, setNotifications] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  // 1. Listen to Firestore in real-time
+  useEffect(() => {
+    if (!user?.user?.id) return;
+
+    // Filter by receiver_id matching logged-in user
+    const q = query(
+      collection(db, "notifications"),
+      where("receiver_id", "==", String(user.user.id)),
+      orderBy("timestamp", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setNotifications(docs);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // 2. Handlers
+  const handleDelete = async (id) => {
+    await deleteDoc(doc(db, "notifications", id));
+  };
+
+  const handleView = (notif) => {
+    console.log("Navigating to notice:", notif.mysql_id);
+    // window.location.href = `/compliance/${notif.mysql_id}`;
+  };
 
   // Helper to get Initials (e.g., "Marck Sabado" -> "MS")
   const getInitials = () => {
@@ -50,25 +87,33 @@ export default function Topbar({ sidebarCollapsed = false }) {
 
       {/* ── Notification bell ── */}
       <div className="relative">
-        {/* ICON_PLACEHOLDER: NOTIFICATION BELL */}
         <button
-          className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-50
-                     border border-gray-200 text-gray-500 hover:border-[#89A1EF]/40
-                     hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 transition-all"
-          aria-label="Notifications"
+          onClick={() => setShowModal(!showModal)}
+          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all 
+            ${showModal ? 'border-[#89A1EF] bg-[#89A1EF]/10 text-[#89A1EF]' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8"
-               viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </button>
-        {/* Badge */}
-        <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#89A1EF] text-white text-[9px]
-                         font-bold rounded-full flex items-center justify-center font-mono
-                         border-2 border-white shadow-sm">
-          3
-        </span>
+
+        {/* Dynamic Badge */}
+        {notifications.length > 0 && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#89A1EF] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+            {notifications.length}
+          </span>
+        )}
+
+        {/* The Modal */}
+        {showModal && (
+          <NotificationModal 
+            notifications={notifications}
+            onClose={() => setShowModal(false)}
+            onDelete={handleDelete}
+            onView={handleView}
+          />
+        )}
       </div>
 
       {/* IMAGE_PLACEHOLDER: USER AVATAR */}
