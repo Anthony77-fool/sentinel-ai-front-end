@@ -5,6 +5,8 @@ import { Logo } from "./sidebar-sections/Logo";
 import { Nav } from "./sidebar-sections/Nav";
 import { UserActions } from "./sidebar-sections/UserActions";
 
+import { useProfile } from "../../utils/useProfile";
+
 /* ── Tiny square icon placeholder ── */
 const IconPH = ({ size = "w-4 h-4" }) => (
   <span
@@ -18,17 +20,10 @@ const IconPH = ({ size = "w-4 h-4" }) => (
 
 export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollapsed }) {
 
-  // 1. Get User Data from LocalStorage
-  const userString = localStorage.getItem("user");
-  const user = userString ? JSON.parse(userString) : null;
+  // 1. Just call the hook. No need for fetchUserProfile here anymore!
+  const { data: user, isLoading } = useProfile();
 
-  // 2. Helper to get Initials
-  const getInitials = () => {
-    if (!user) return "??";
-    const f = user.firstName?.charAt(0) || "";
-    const l = user.lastName?.charAt(0) || "";
-    return (f + l).toUpperCase();
-  };
+  if (isLoading) return null; // Or a small skeleton loader
 
   return (
     <>
@@ -47,15 +42,28 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
         <div className="border-t border-gray-100 py-3 px-2 space-y-0.5">
           {!collapsed && (
             <div className="flex items-center gap-3 px-2 py-2 mb-1">
-              <div className="w-8 h-8 rounded-full bg-[#89A1EF]/10 border border-[#89A1EF]/25
-                              flex items-center justify-center flex-shrink-0">
-                <span className="text-[10px] font-bold text-[#89A1EF] font-mono">{getInitials()}</span>
+              {/* IMAGE_PLACEHOLDER: AVATAR */}
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-[#89A1EF]/25 flex items-center justify-center bg-gray-50">
+                <img 
+                  src={
+                    user?.user?.profile_image 
+                      ? user.user.profile_image 
+                      : `https://ui-avatars.com/api/?name=${user?.user?.first_name}+${user?.user?.last_name}`
+                  } 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // If the path breaks, use the initials as a last resort
+                    e.target.src = `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`;
+                  }}
+                />
               </div>
               <div className="overflow-hidden">
+                {/* DYNAMIC NAME */}
                 <p className="text-xs font-semibold text-gray-800 truncate">
-                  {user ? `${user.firstName} ${user.lastName || ""}` : "Guest User"}
+                  {user?.user ? `${user.user.first_name} ${user.user.last_name}` : "Guest User"}
                 </p>
-                {/* UPDATED ROLE FOR EMPLOYEE SIDEBAR */}
+                {/* ROLE */}
                 <p className="text-[10px] text-gray-400 truncate">
                   Employee
                 </p>
@@ -64,7 +72,7 @@ export default function Sidebar({ activeNav, setActiveNav, collapsed, setCollaps
           )}
 
           {/* ── User Actions ─────────────────────────────────────── */}
-          <UserActions collapsed={collapsed} />
+          <UserActions collapsed={collapsed} activeNav={activeNav} setActiveNav={setActiveNav} />
         </div>
       </aside>
     </>

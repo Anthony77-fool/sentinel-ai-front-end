@@ -8,6 +8,7 @@ import EmployeeDashboard from "./main-sections/EmployeeDashboard";
 import AiTools   from "./main-sections/AiTools"; 
 import MyStatus from "./main-sections/MyStatus";
 import CompanyGuidelines from "./main-sections/CompanyGuidelines";
+import EmployeeProfile from "./main-sections/EmployeeProfile";
 
 export default function EmployeeMain() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -55,6 +56,8 @@ export default function EmployeeMain() {
         return <MyStatus sidebarCollapsed={sidebarCollapsed} />;
       case "guidelines":
         return <CompanyGuidelines sidebarCollapsed={sidebarCollapsed} />;
+      case "profile":
+              return <EmployeeProfile sidebarCollapsed={sidebarCollapsed} />;
       default:
         return <EmployeeDashboard sidebarCollapsed={sidebarCollapsed} 
         setActiveNav={setActiveNav} 

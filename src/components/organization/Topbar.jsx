@@ -78,19 +78,18 @@ export default function Topbar({ sidebarCollapsed = false }) {
                       hover:border-[#89A1EF]/60 transition-colors shadow-sm relative">
         
         <img 
-  src={
-    user?.user?.profile_image 
-      ? user.user.profile_image 
-      : `https://ui-avatars.com/api/?name=${user?.user?.first_name || 'User'}+${user?.user?.last_name || ''}&background=89A1EF&color=fff`
-  } 
-  alt="Profile" 
-  className="w-full h-full object-cover"
-  onError={(e) => {
-    // IMPORTANT: Match the nesting used in the src above!
-    const name = user?.user?.first_name || 'U';
-    e.target.src = `https://ui-avatars.com/api/?name=${name}&background=89A1EF&color=fff`;
-  }} 
-/>
+          src={
+            user?.user?.profile_image 
+              ? user.user.profile_image 
+              : `https://ui-avatars.com/api/?name=${user?.user?.first_name}+${user?.user?.last_name}`
+          } 
+          alt="Profile" 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // If the path breaks, use the initials as a last resort
+            e.target.src = `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`;
+          }} 
+        />
       </div>
     </header>
   );
