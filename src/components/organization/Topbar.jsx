@@ -1,19 +1,17 @@
-/**
- * Topbar — fixed top navigation bar
- * Light theme: white bg, gray border, #89A1EF accents
- */
+import { useProfile } from "../../utils/useProfile";
+
 export default function Topbar({ sidebarCollapsed = false }) {
   const leftClass = sidebarCollapsed ? "left-16" : "left-56";
 
-    // 1. Get User Data from LocalStorage
-  const userString = localStorage.getItem("user");
-  const user = userString ? JSON.parse(userString) : null;
+  //Get User Data from LocalStorage
+  const { data: user, isLoading } = useProfile();
 
-  // 2. Helper to get Initials (e.g., "Marck Sabado" -> "MS")
+  // Helper to get Initials (e.g., "Marck Sabado" -> "MS")
   const getInitials = () => {
+    // Note: using user.first_name because we fixed the hook to return result.user
     if (!user) return "??";
-    const f = user.firstName?.charAt(0) || "";
-    const l = user.lastName?.charAt(0) || "";
+    const f = user.first_name?.charAt(0) || "";
+    const l = user.last_name?.charAt(0) || "";
     return (f + l).toUpperCase();
   };
 
@@ -73,12 +71,26 @@ export default function Topbar({ sidebarCollapsed = false }) {
         </span>
       </div>
 
-      {/* ── User avatar ── */}
       {/* IMAGE_PLACEHOLDER: USER AVATAR */}
+      {/* ── User avatar ── */}
       <div className="w-9 h-9 rounded-full bg-[#89A1EF]/10 border-2 border-[#89A1EF]/25
-                      flex items-center justify-center cursor-pointer
-                      hover:border-[#89A1EF]/60 transition-colors shadow-sm">
-        <span className="text-[11px] font-bold text-[#89A1EF] font-mono">{getInitials()}</span>
+                      flex items-center justify-center cursor-pointer overflow-hidden
+                      hover:border-[#89A1EF]/60 transition-colors shadow-sm relative">
+        
+        <img 
+  src={
+    user?.user?.profile_image 
+      ? user.user.profile_image 
+      : `https://ui-avatars.com/api/?name=${user?.user?.first_name || 'User'}+${user?.user?.last_name || ''}&background=89A1EF&color=fff`
+  } 
+  alt="Profile" 
+  className="w-full h-full object-cover"
+  onError={(e) => {
+    // IMPORTANT: Match the nesting used in the src above!
+    const name = user?.user?.first_name || 'U';
+    e.target.src = `https://ui-avatars.com/api/?name=${name}&background=89A1EF&color=fff`;
+  }} 
+/>
       </div>
     </header>
   );
