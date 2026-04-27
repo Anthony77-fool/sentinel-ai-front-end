@@ -79,9 +79,17 @@ export function LeftCol({ user, organization }){
             
           <div className="relative group mb-6">
             <img 
-              src={user.profile_image || 'https://ui-avatars.com/api/?name=' + user.first_name + '+' + user.last_name} 
+              src={
+                user.profile_image 
+                  ? user.profile_image 
+                  : `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=89A1EF&color=fff`
+              } 
               alt={`${user.first_name} ${user.last_name}`} 
               className="size-32 rounded-full border-4 border-white shadow-xl shadow-[#89A1EF]/20 object-cover ring-2 ring-[#89A1EF]/10"
+              onError={(e) => {
+                // Fallback if the image path is broken or the server is down
+                e.target.src = `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}`;
+              }}
             />
             
             {/* The Hidden Input */}
