@@ -38,7 +38,6 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
         .flat() // Flatten nested arrays into one list
         .filter(item => item && item.length > 0); // Remove empty values or []
 
-      console.log("Cleaned Categories:", cleaned);
       return cleaned;
     },
     enabled: isOpen,
@@ -60,10 +59,38 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedPenalty === "Select Penalty Type") return alert("Please select a penalty type");
+
+    const token = localStorage.getItem("token");
     
-    // Here is where you will eventually call your Firebase/Laravel POST route
-    console.log("Notifying:", employee.id, "Type:", selectedPenalty, "Comment:", comment);
-    onClose();
+    const payload = {
+      employee_id: employee.id,
+      violation_category: selectedPenalty,
+      comment: comment,
+    };
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/employees/notify`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // You could trigger a toast notification here
+        console.log("Firebase & MySQL Success:", result);
+        onClose();
+      } else {
+        alert("Error: " + result.error);
+      }
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
 
   return (
