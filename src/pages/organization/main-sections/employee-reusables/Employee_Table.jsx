@@ -3,10 +3,10 @@ import { useState } from "react";
 import NotifyModal from "./NotifyModal";
 
 export function Employee_Table({ filteredEmployees }) {
-
   const [selectedEmp, setSelectedEmp] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fix: Correctly receive and set the employee
   const handleNotifyClick = (emp) => {
     setSelectedEmp(emp);
     setIsModalOpen(true);
@@ -14,25 +14,17 @@ export function Employee_Table({ filteredEmployees }) {
 
   return (
     <>
-
       <NotifyModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         employee={selectedEmp} 
       />
 
-      {/* ── Employee Table Container ── */}
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col">
-        
-        {/* Wrapper for the scrollable area.
-            max-h-[400px] roughly fits 5-6 rows. 
-            'overflow-y-auto' adds the scrollbar only when content exceeds the height.
-        */}
         <div className="overflow-y-auto max-h-[400px] custom-scrollbar">
           <table className="w-full text-left border-collapse relative">
-            {/* 'sticky top-0' keeps the header visible while you scroll */}
             <thead className="sticky top-0 z-10 bg-gray-50 border-b border-gray-100 shadow-sm">
-              <tr className="">
+              <tr>
                 <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Employee</th>
                 <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
                 <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Joined Date</th>
@@ -46,15 +38,30 @@ export function Employee_Table({ filteredEmployees }) {
                 <tr key={emp.id} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="size-9 rounded-full bg-gradient-to-tr from-[#89A1EF] to-[#768bd9] flex items-center justify-center text-white font-bold text-xs shrink-0">
-                        {emp.name.split(' ').map(n => n[0]).join('')}
+                      
+                      {/* Dynamic Profile Image Logic */}
+                      <div className="size-9 rounded-full overflow-hidden shrink-0 border border-gray-100 shadow-sm">
+                        {emp.profile_image ? (
+                          <img 
+                            src={emp.profile_image} 
+                            alt={emp.name} 
+                            className="size-full object-cover"
+                            onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=" + emp.name; }} 
+                          />
+                        ) : (
+                          <div className="size-full bg-gradient-to-tr from-[#89A1EF] to-[#768bd9] flex items-center justify-center text-white font-bold text-xs">
+                            {emp.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                        )}
                       </div>
+
                       <div>
                         <p className="text-sm font-bold text-gray-800">{emp.name}</p>
                         <p className="text-[11px] text-gray-400">{emp.email}</p>
                       </div>
                     </div>
                   </td>
+                  
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
                       emp.status === 'Active' ? 'text-emerald-500 bg-emerald-50' : 'text-gray-400 bg-gray-100'
@@ -63,8 +70,10 @@ export function Employee_Table({ filteredEmployees }) {
                       {emp.status}
                     </span>
                   </td>
+                  
                   <td className="px-6 py-4 text-sm text-gray-500">{emp.joined}</td>
                   <td className="px-6 py-4 text-sm font-mono text-gray-600">{emp.usage}</td>
+                  
                   <td className="px-6 py-4 text-center">
                     <span className={`text-[10px] font-bold px-3 py-1 rounded-lg border uppercase tracking-tighter ${
                       emp.risk === 'High' ? 'bg-rose-50 text-rose-500 border-rose-100' :
@@ -74,10 +83,12 @@ export function Employee_Table({ filteredEmployees }) {
                       {emp.risk}
                     </span>
                   </td>
+
                   <td className="px-6 py-4 text-right">
                     <button 
-                    onClick={handleNotifyClick}
-                    className="p-1.5 text-gray-400 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 rounded-lg transition-all cursor-pointer">
+                      onClick={() => handleNotifyClick(emp)} // Fix: Passed 'emp' here
+                      className="p-1.5 text-gray-400 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 rounded-lg transition-all cursor-pointer"
+                    >
                       <IoAlertCircleOutline className="size-6" />
                     </button>
                   </td>
@@ -87,7 +98,6 @@ export function Employee_Table({ filteredEmployees }) {
           </table>
         </div>
         
-        {/* Table Footer / Summary - Stays pinned at the bottom */}
         <div className="bg-gray-50/50 px-6 py-4 border-t border-gray-100 flex items-center justify-between z-20">
           <p className="text-[11px] text-gray-400 font-medium italic">
             * Employees are automatically registered via Gateway. Monitoring is real-time.

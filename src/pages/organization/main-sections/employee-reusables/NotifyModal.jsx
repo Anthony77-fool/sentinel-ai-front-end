@@ -1,33 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { 
   IoClose, 
   IoSend, 
   IoAlertCircle, 
   IoChatbubbleEllipsesOutline,
-  IoChevronDownOutline 
+  IoChevronDownOutline,
+  IoTimeOutline
 } from "react-icons/io5";
-
-// This would eventually come from your DB
-const PENALTY_TYPES = [
-  "PII Data Leakage", 
-  "Malware Execution", 
-  "Unauthorized Prompting", 
-  "Policy Bypass Attempt",
-  "General Conduct"
-];
 
 export default function NotifyModal({ isOpen, onClose, employee }) {
   const [comment, setComment] = useState("");
   const [selectedPenalty, setSelectedPenalty] = useState("Select Penalty Type");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // ── Fetch Dynamic Categories ──
+  const { data: penaltyTypes = [] } = useQuery({
+    queryKey: ["violation-categories"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/violation-categories`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const rawData = await res.json(); 
+
+      // ── Cleaning Logic ──
+      const cleaned = rawData
+        .map(item => {
+          try {
+            // Parse the string "[\"Title\"]" into a real array ["Title"]
+            return JSON.parse(item); 
+          } catch (e) {
+            return item; // Fallback if it's already a string
+          }
+        })
+        .flat() // Flatten nested arrays into one list
+        .filter(item => item && item.length > 0); // Remove empty values or []
+
+      console.log("Cleaned Categories:", cleaned);
+      return cleaned;
+    },
+    enabled: isOpen,
+  });
+
+  // ── Auto-fill logic ──
+  useEffect(() => {
+    if (employee && isOpen) {
+      const detected = employee.last_violation?.title;
+      if (detected) {
+        setSelectedPenalty(detected);
+        setComment(`System flagged: ${detected}. Please explain the context of this session.`);
+      }
+    }
+  }, [employee, isOpen]);
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedPenalty === "Select Penalty Type") return alert("Please select a penalty type");
     
-    console.log("Notifying:", employee.name, "Type:", selectedPenalty, "Comment:", comment);
+    // Here is where you will eventually call your Firebase/Laravel POST route
+    console.log("Notifying:", employee.id, "Type:", selectedPenalty, "Comment:", comment);
     onClose();
   };
 
@@ -37,13 +72,19 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
         
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-rose-50 rounded-lg text-rose-500">
-              <IoAlertCircle className="size-5" />
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-full border-2 border-white shadow-sm overflow-hidden bg-gray-200">
+                {employee?.profile_image ? (
+                    <img src={employee.profile_image} className="size-full object-cover" alt="" />
+                ) : (
+                    <div className="size-full flex items-center justify-center bg-[#89A1EF] text-white font-bold text-xs">
+                        {employee?.name?.charAt(0)}
+                    </div>
+                )}
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Issue Compliance Notice</h3>
-              <p className="text-[11px] text-gray-500">Notifying: {employee?.name}</p>
+              <h3 className="text-sm font-bold text-gray-900 leading-tight">Compliance Notice</h3>
+              <p className="text-[11px] text-gray-500">{employee?.email}</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-200 rounded-full transition-colors cursor-pointer">
@@ -51,12 +92,26 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           
-          {/* Custom Styled Dropdown (Matched to AiTools) */}
+          {/* Dynamic Violation Insight (The "Evidence") */}
+          {employee?.last_violation && (
+              <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-start gap-3">
+                  <IoAlertCircle className="text-rose-500 size-5 shrink-0 mt-0.5" />
+                  <div>
+                      <p className="text-[12px] font-bold text-rose-700">Detected: {employee.last_violation.title}</p>
+                      <div className="flex items-center gap-1 text-[10px] text-rose-500 mt-1 uppercase font-bold tracking-tighter">
+                          <IoTimeOutline />
+                          Flagged {employee.last_violation.timestamp}
+                      </div>
+                  </div>
+              </div>
+          )}
+
+          {/* Custom Styled Dropdown */}
           <div className="relative">
             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-              Violation Category
+              Actionable Violation Category
             </label>
             
             <button 
@@ -75,8 +130,8 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
             {isDropdownOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)} />
-                <div className="absolute left-0 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl z-20 py-1 animate-in fade-in zoom-in duration-150">
-                  {PENALTY_TYPES.map((type) => (
+                <div className="absolute left-0 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl z-20 py-1 animate-in fade-in zoom-in duration-150 max-h-48 overflow-y-auto custom-scrollbar">
+                  {penaltyTypes.map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -84,8 +139,7 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
                         setSelectedPenalty(type);
                         setIsDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-3 text-sm transition-colors cursor-pointer
-                        ${selectedPenalty === type ? 'bg-[#89A1EF]/10 text-[#89A1EF] font-bold' : 'text-gray-600 hover:bg-gray-50'}`}
+                      className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
                     >
                       {type}
                     </button>
@@ -98,13 +152,13 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
           {/* Comment Area */}
           <div>
             <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-              Admin Instructions
+              Admin Message (Sent via Firestore)
             </label>
             <div className="relative">
               <textarea 
                 rows="4"
                 required
-                placeholder="e.g. Please proceed to the HR office immediately to discuss your recent interactions."
+                placeholder="Write a message to the employee..."
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-[#89A1EF]/20 focus:border-[#89A1EF] outline-none transition-all resize-none placeholder:text-gray-300"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -120,14 +174,14 @@ export default function NotifyModal({ isOpen, onClose, employee }) {
               onClick={onClose}
               className="flex-1 px-4 py-3 text-sm font-bold text-gray-500 hover:bg-gray-100 rounded-xl transition-all cursor-pointer"
             >
-              Dismiss
+              Cancel
             </button>
             <button
               type="submit"
               className="flex-[2] bg-[#89A1EF] hover:bg-[#768bd9] text-white px-4 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#89A1EF]/30 transition-all active:scale-95 cursor-pointer"
             >
               <IoSend className="size-3.5" />
-              Notify Employee
+              Notify {employee?.name?.split(' ')[0]}
             </button>
           </div>
         </form>
