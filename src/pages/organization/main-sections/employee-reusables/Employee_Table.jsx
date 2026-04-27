@@ -1,8 +1,26 @@
-import { IoEllipsisVertical } from "react-icons/io5";
+import { IoAlertCircleOutline } from "react-icons/io5";
+import { useState } from "react";
+import NotifyModal from "./NotifyModal";
 
 export function Employee_Table({ filteredEmployees }) {
+
+  const [selectedEmp, setSelectedEmp] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleNotifyClick = (emp) => {
+    setSelectedEmp(emp);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
+
+      <NotifyModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        employee={selectedEmp} 
+      />
+
       {/* ── Employee Table Container ── */}
       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col">
         
@@ -56,11 +74,13 @@ export function Employee_Table({ filteredEmployees }) {
                       {emp.risk}
                     </span>
                   </td>
-                  {/*<td className="px-6 py-4 text-right">
-                    <button className="p-1.5 text-gray-400 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 rounded-lg transition-all cursor-pointer">
-                      <IoEllipsisVertical className="size-4" />
+                  <td className="px-6 py-4 text-right">
+                    <button 
+                    onClick={handleNotifyClick}
+                    className="p-1.5 text-gray-400 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5 rounded-lg transition-all cursor-pointer">
+                      <IoAlertCircleOutline className="size-6" />
                     </button>
-                  </td>*/}
+                  </td>
                 </tr>
               ))}
             </tbody>
