@@ -5,7 +5,8 @@ import {
   IoShieldCheckmarkOutline, 
   IoPersonAddOutline, 
   IoWarningOutline, 
-  IoReaderOutline 
+  IoReaderOutline,
+  IoShieldCheckmark
 } from "react-icons/io5";
 
 /* ─────────────────────────────────────────────
@@ -145,51 +146,75 @@ export function FeaturesGrid() {
 ───────────────────────────────────────────── */
 export function SecurityBanner() {
   const ref = useReveal(0);
+
   return (
     <section className="bg-[#F8FAFC] py-20">
       <div className="max-w-7xl mx-auto px-6">
         <div
           ref={ref}
           className="relative overflow-hidden bg-white border border-[#89A1EF]/20
-                     rounded-3xl px-10 py-14 text-center shadow-sm"
+                     rounded-[3rem] px-10 py-20 text-center shadow-sm group"
         >
-          {/* Subtle accent glow */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br
-                          from-[#89A1EF]/4 via-transparent to-[#89A1EF]/4 pointer-events-none" />
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full
-                          bg-[#89A1EF]/6 blur-3xl pointer-events-none" />
+          {/* ── BACKGROUND IMAGE LAYER ── */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/imgs/security-bg-pattern.jpg" 
+              alt="Security Background" 
+              className="w-full h-full object-cover opacity-[0.03] group-hover:scale-105 transition-transform duration-1000"
+            />
+          </div>
 
-          <div className="relative">
-            {/* ICON_PLACEHOLDER: large shield / lock icon */}
-            <div className="w-16 h-16 rounded-2xl bg-[#89A1EF]/10 border border-[#89A1EF]/20
-                            flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-mono text-[#89A1EF]">⬡</span>
+          {/* ── GRADIENT OVERLAYS ── */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br
+                        from-[#89A1EF]/5 via-transparent to-[#89A1EF]/5 pointer-events-none" />
+          
+          {/* Animated Glow */}
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full
+                        bg-[#89A1EF]/10 blur-[100px] pointer-events-none animate-pulse" />
+
+          <div className="relative z-10">
+            {/* MAIN SECURITY ICON */}
+            <div className="w-20 h-20 rounded-3xl bg-[#89A1EF] border-4 border-white
+                            flex items-center justify-center mx-auto mb-8 shadow-xl shadow-[#89A1EF]/20
+                            group-hover:rotate-[360deg] transition-transform duration-700">
+              <IoShieldCheckmark className="text-3xl text-white" />
             </div>
 
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#89A1EF] mb-4">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#89A1EF] mb-4">
               Enterprise-Grade Security
             </p>
+            
             <h2 className="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight
-                           leading-tight mb-5">
+                           leading-tight mb-6">
               Built for organizations that take
               <br />
               <span className="text-[#89A1EF]">AI security seriously.</span>
             </h2>
-            <p className="text-gray-500 text-base max-w-2xl mx-auto leading-relaxed">
-              From Fortune 500 legal departments to healthcare systems bound by HIPAA —
-              SentinelAI is architected for the environments where a single data leak
+
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
+              From Fortune 500 legal departments to healthcare systems bound by HIPAA — 
+              SentinelAI is architected for environments where a single data leak 
               can have irreversible consequences.
             </p>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-10">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               {["SOC 2 Type II", "GDPR Ready", "HIPAA Compliant", "ISO 27001"].map((badge) => (
-                <span key={badge}
-                  className="bg-[#89A1EF]/8 border border-[#89A1EF]/20 text-[#89A1EF]
-                             text-xs font-bold px-4 py-2 rounded-full">
+                <div 
+                  key={badge}
+                  className="bg-white border border-gray-200 text-gray-600
+                             text-[11px] font-bold px-5 py-2.5 rounded-2xl shadow-sm
+                             hover:border-[#89A1EF]/40 hover:text-[#89A1EF] transition-colors"
+                >
                   {badge}
-                </span>
+                </div>
               ))}
+            </div>
+            
+            <div className="mt-12">
+              <button className="text-[#89A1EF] text-sm font-bold hover:underline decoration-2 underline-offset-4">
+                Download Security Whitepaper →
+              </button>
             </div>
           </div>
         </div>
