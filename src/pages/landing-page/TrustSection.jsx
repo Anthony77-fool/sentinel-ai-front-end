@@ -1,4 +1,9 @@
 import { useRef, useEffect } from "react";
+import { 
+  IoShieldCheckmarkOutline, 
+  IoPulseOutline, 
+  IoServerOutline 
+} from "react-icons/io5";
 
 /* ── Intersection-observer fade-in hook ── */
 function useScrollReveal() {
@@ -28,24 +33,27 @@ function useScrollReveal() {
 const PILLARS = [
   {
     title: "Data Protection",
-    desc:  "Automatically detects and masks PII, credentials, and sensitive content before it reaches any LLM — keeping your organization's data inside your walls.",
+    icon: IoShieldCheckmarkOutline, // Add this
+    desc: "Automatically detects and masks PII, credentials, and sensitive content before it reaches any LLM — keeping your organization's data inside your walls.",
     color: "text-[#89A1EF]",
-    bg:    "bg-[#89A1EF]/8",
-    border:"border-[#89A1EF]/20",
+    bg: "bg-[#89A1EF]/8",
+    border: "border-[#89A1EF]/20",
   },
   {
     title: "Real-Time Monitoring",
-    desc:  "Every employee interaction with AI tools is tracked, scored, and logged the moment it happens — with a heartbeat system that never misses a signal.",
+    icon: IoPulseOutline, // Add this
+    desc: "Every employee interaction with AI tools is tracked, scored, and logged the moment it happens — with a heartbeat system that never misses a signal.",
     color: "text-emerald-600",
-    bg:    "bg-emerald-50",
-    border:"border-emerald-200/60",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200/60",
   },
   {
     title: "AI Governance",
-    desc:  "Deploy, update, and enforce organizational AI policies centrally from the admin dashboard — with audit trails that satisfy even the most rigorous compliance teams.",
+    icon: IoServerOutline, // Add this
+    desc: "Deploy, update, and enforce organizational AI policies centrally from the admin dashboard — with audit trails that satisfy even the most rigorous compliance teams.",
     color: "text-violet-600",
-    bg:    "bg-violet-50",
-    border:"border-violet-200/60",
+    bg: "bg-violet-50",
+    border: "border-violet-200/60",
   },
 ];
 
@@ -71,17 +79,14 @@ function PillarCard({ pillar, delay = 0 }) {
     return () => observer.disconnect();
   }, [delay]);
 
+  const Icon = pillar.icon;
+
   return (
-    <div
-      ref={ref}
-      className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm
-                 hover:shadow-md hover:border-[#89A1EF]/25 transition-all duration-300 group"
-    >
-      {/* ICON_PLACEHOLDER — replace with a real icon for the pillar topic */}
+    <div ref={ref} className="...">
       <div className={`w-12 h-12 rounded-2xl ${pillar.bg} border ${pillar.border}
                        flex items-center justify-center mb-5 group-hover:scale-110
                        transition-transform`}>
-        <span className={`text-xl font-mono ${pillar.color}`}>⬡</span>
+        <Icon className={`text-2xl ${pillar.color}`} /> 
       </div>
 
       <h3 className="text-lg font-bold text-gray-900 mb-2">{pillar.title}</h3>
