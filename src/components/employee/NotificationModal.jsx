@@ -1,7 +1,13 @@
 import React from "react";
 import { formatDistanceToNow } from "date-fns";
 
-export default function NotificationModal({ notifications, onClose, onDelete, onView }) {
+export default function NotificationModal({ 
+  notifications, 
+  onClose, 
+  onDelete, 
+  onMarkAsRead, // Updated prop
+  onMarkAllAsRead 
+}) {
   return (
     <>
       {/* Backdrop to close modal when clicking outside */}
@@ -31,6 +37,7 @@ export default function NotificationModal({ notifications, onClose, onDelete, on
                     <span className="text-[11px] font-bold text-[#89A1EF] uppercase tracking-wider">
                       {notif.type?.replace('_', ' ')}
                     </span>
+                    {/* The small X button also works as delete/read */}
                     <button 
                       onClick={() => onDelete(notif.id)}
                       className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-all"
@@ -47,10 +54,10 @@ export default function NotificationModal({ notifications, onClose, onDelete, on
                       {notif.timestamp ? formatDistanceToNow(new Date(notif.timestamp)) + ' ago' : ''}
                     </span>
                     <button 
-                      onClick={() => onView(notif)}
+                      onClick={() => onMarkAsRead(notif)} // Trigger single read
                       className="text-[10px] font-bold text-[#89A1EF] hover:underline"
                     >
-                      View Details
+                      Mark as read
                     </button>
                   </div>
                 </div>
@@ -59,11 +66,16 @@ export default function NotificationModal({ notifications, onClose, onDelete, on
           )}
         </div>
 
-        <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
-          <button className="text-[11px] font-bold text-gray-500 hover:text-[#89A1EF]">
-            Mark all as read
-          </button>
-        </div>
+        {notifications.length > 0 && (
+          <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
+            <button 
+              onClick={onMarkAllAsRead} // Trigger batch delete
+              className="text-[11px] font-bold text-gray-500 hover:text-[#89A1EF] transition-colors"
+            >
+              Mark all as read
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

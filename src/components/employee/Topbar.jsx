@@ -1,75 +1,75 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../../utils/useProfile";
 import { db } from "../../firebase-config/Firebase";
+import { useNavigate } from "react-router-dom"; // 1. Add this
 import { 
   collection, 
   query, 
-  where, 
   onSnapshot, 
   doc, 
   deleteDoc, 
-  orderBy 
+  writeBatch // 2. Add this for "Mark All as Read"
 } from "firebase/firestore";
 import NotificationModal from "./NotificationModal";
 
 export default function Topbar({ sidebarCollapsed = false }) {
+  const navigate = useNavigate(); // 3. Initialize Navigate
   const leftClass = sidebarCollapsed ? "left-16" : "left-56";
 
-  // Get User Data from LocalStorage/Hook
-  const { data: user, isLoading } = useProfile();
-  
+  const { data: user } = useProfile();
   const [notifications, setNotifications] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  // 1. Listen to Firestore in real-time
+  // Listen to Firestore
   useEffect(() => {
-    // Note: Ensuring we have the ID before attempting to query
     if (!user?.user?.id) return;
+    const currentUserId = String(user.user.id);
 
-    // Filter by receiver_id matching logged-in user
-    // We use String() because the PHP backend sends IDs as strings to Firestore
-    const q = query(
-      collection(db, "notifications"),
-      where("receiver_id", "==", String(user.user.id)),
-      orderBy("timestamp", "desc")
-    );
+    const q = query(collection(db, "notifications"));
 
-    // This listener automatically updates the 'notifications' state whenever Firestore changes
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setNotifications(docs);
-    }, (error) => {
-      // Common cause for empty display: Missing composite index
-      console.error("Firestore Listener Error:", error);
+      const allDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const filtered = allDocs.filter(d => String(d.receiver_id) === currentUserId);
+      setNotifications(filtered);
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  // 2. Handlers
+  // --- Handlers ---
+
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "notifications", id));
     } catch (err) {
-      console.error("Failed to delete notification:", err);
+      console.error("Delete failed:", err);
     }
   };
 
-  const handleView = (notif) => {
-    // Redirects to the specific compliance notice detail
-    console.log("Navigating to notice:", notif.mysql_id);
-    // window.location.href = `/compliance/notice/${notif.mysql_id}`;
+  const handleMarkAsRead = async (notif) => {
+    try {
+      await deleteDoc(doc(db, "notifications", notif.id));
+      console.log("Notification marked as read");
+    } catch (err) {
+      console.error("Error marking as read:", err);
+    }
   };
 
-  // Helper to get Initials (e.g., "Marck Sabado" -> "MS")
-  const getInitials = () => {
-    if (!user?.user) return "??";
-    const f = user.user.first_name?.charAt(0) || "";
-    const l = user.user.last_name?.charAt(0) || "";
-    return (f + l).toUpperCase();
+  const handleMarkAllAsRead = async () => {
+    if (notifications.length === 0) return;
+    
+    const batch = writeBatch(db);
+    notifications.forEach((notif) => {
+      const docRef = doc(db, "notifications", notif.id);
+      batch.delete(docRef);
+    });
+
+    try {
+      await batch.commit();
+      console.log("All marked as read");
+    } catch (err) {
+      console.error("Failed to clear notifications:", err);
+    }
   };
 
   return (
@@ -108,9 +108,8 @@ export default function Topbar({ sidebarCollapsed = false }) {
       <div className="relative">
         <button
           onClick={() => setShowModal(!showModal)}
-          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all 
-            ${showModal ? 'border-[#89A1EF] bg-[#89A1EF]/10 text-[#89A1EF]' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-[#89A1EF]/40 hover:text-[#89A1EF] hover:bg-[#89A1EF]/5'}`}
-          aria-label="Notifications"
+          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all cursor-pointer
+            ${showModal ? 'border-[#89A1EF] bg-[#89A1EF]/10 text-[#89A1EF]' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -118,27 +117,26 @@ export default function Topbar({ sidebarCollapsed = false }) {
           </svg>
         </button>
 
-        {/* Dynamic Badge - Only show if count > 0 */}
         {notifications.length > 0 && (
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#89A1EF] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm font-mono">
             {notifications.length}
           </span>
         )}
 
-        {/* The Modal Component */}
         {showModal && (
           <NotificationModal 
             notifications={notifications}
             onClose={() => setShowModal(false)}
             onDelete={handleDelete}
-            onView={handleView}
+            onMarkAsRead={handleMarkAsRead} // Updated prop name
+            onMarkAllAsRead={handleMarkAllAsRead} 
           />
         )}
       </div>
 
       {/* ── User avatar ── */}
       <div className="w-9 h-9 rounded-full bg-[#89A1EF]/10 border-2 border-[#89A1EF]/25
-                      flex items-center justify-center cursor-pointer overflow-hidden
+                      flex items-center justify-center overflow-hidden
                       hover:border-[#89A1EF]/60 transition-colors shadow-sm relative">
         <img 
           src={

@@ -1,55 +1,75 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../../utils/useProfile";
 import { db } from "../../firebase-config/Firebase";
-import { collection, query, where, onSnapshot, doc, deleteDoc, orderBy } from "firebase/firestore";
+import { useNavigate } from "react-router-dom"; // 1. Add this
+import { 
+  collection, 
+  query, 
+  onSnapshot, 
+  doc, 
+  deleteDoc, 
+  writeBatch // 2. Add this for "Mark All as Read"
+} from "firebase/firestore";
 import NotificationModal from "./NotificationModal";
 
 export default function Topbar({ sidebarCollapsed = false }) {
+  const navigate = useNavigate(); // 3. Initialize Navigate
   const leftClass = sidebarCollapsed ? "left-16" : "left-56";
 
   const { data: user } = useProfile();
   const [notifications, setNotifications] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  // 1. Listen to Firestore in real-time
+  // Listen to Firestore
   useEffect(() => {
     if (!user?.user?.id) return;
+    const currentUserId = String(user.user.id);
 
-    // Filter by receiver_id matching logged-in user
-    const q = query(
-      collection(db, "notifications"),
-      where("receiver_id", "==", String(user.user.id)),
-      orderBy("timestamp", "desc")
-    );
+    const q = query(collection(db, "notifications"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setNotifications(docs);
+      const allDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const filtered = allDocs.filter(d => String(d.receiver_id) === currentUserId);
+      setNotifications(filtered);
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  // 2. Handlers
+  // --- Handlers ---
+
   const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "notifications", id));
+    try {
+      await deleteDoc(doc(db, "notifications", id));
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
-  const handleView = (notif) => {
-    console.log("Navigating to notice:", notif.mysql_id);
-    // window.location.href = `/compliance/${notif.mysql_id}`;
+  const handleMarkAsRead = async (notif) => {
+    try {
+      await deleteDoc(doc(db, "notifications", notif.id));
+      console.log("Notification marked as read");
+    } catch (err) {
+      console.error("Error marking as read:", err);
+    }
   };
 
-  // Helper to get Initials (e.g., "Marck Sabado" -> "MS")
-  const getInitials = () => {
-    // Note: using user.first_name because we fixed the hook to return result.user
-    if (!user) return "??";
-    const f = user.first_name?.charAt(0) || "";
-    const l = user.last_name?.charAt(0) || "";
-    return (f + l).toUpperCase();
+  const handleMarkAllAsRead = async () => {
+    if (notifications.length === 0) return;
+    
+    const batch = writeBatch(db);
+    notifications.forEach((notif) => {
+      const docRef = doc(db, "notifications", notif.id);
+      batch.delete(docRef);
+    });
+
+    try {
+      await batch.commit();
+      console.log("All marked as read");
+    } catch (err) {
+      console.error("Failed to clear notifications:", err);
+    }
   };
 
   return (
@@ -68,7 +88,6 @@ export default function Topbar({ sidebarCollapsed = false }) {
       </div>
 
       {/* ── Search bar ── */}
-      {/* INPUT_PLACEHOLDER: SEARCH BAR */}
       <div className="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-200
                       rounded-xl px-3 py-2 focus-within:border-[#89A1EF]/50
                       focus-within:ring-2 focus-within:ring-[#89A1EF]/10 transition-all">
@@ -89,7 +108,7 @@ export default function Topbar({ sidebarCollapsed = false }) {
       <div className="relative">
         <button
           onClick={() => setShowModal(!showModal)}
-          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all 
+          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all cursor-pointer
             ${showModal ? 'border-[#89A1EF] bg-[#89A1EF]/10 text-[#89A1EF]' : 'bg-gray-50 border-gray-200 text-gray-500'}`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
@@ -98,30 +117,27 @@ export default function Topbar({ sidebarCollapsed = false }) {
           </svg>
         </button>
 
-        {/* Dynamic Badge */}
         {notifications.length > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#89A1EF] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#89A1EF] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm font-mono">
             {notifications.length}
           </span>
         )}
 
-        {/* The Modal */}
         {showModal && (
           <NotificationModal 
             notifications={notifications}
             onClose={() => setShowModal(false)}
             onDelete={handleDelete}
-            onView={handleView}
+            onMarkAsRead={handleMarkAsRead} // Updated prop name
+            onMarkAllAsRead={handleMarkAllAsRead} 
           />
         )}
       </div>
 
-      {/* IMAGE_PLACEHOLDER: USER AVATAR */}
       {/* ── User avatar ── */}
       <div className="w-9 h-9 rounded-full bg-[#89A1EF]/10 border-2 border-[#89A1EF]/25
-                      flex items-center justify-center cursor-pointer overflow-hidden
+                      flex items-center justify-center overflow-hidden
                       hover:border-[#89A1EF]/60 transition-colors shadow-sm relative">
-        
         <img 
           src={
             user?.user?.profile_image 
@@ -131,8 +147,8 @@ export default function Topbar({ sidebarCollapsed = false }) {
           alt="Profile" 
           className="w-full h-full object-cover"
           onError={(e) => {
-            // If the path breaks, use the initials as a last resort
-            e.target.src = `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`;
+            // Fallback to UI Avatars if image path fails
+            e.target.src = `https://ui-avatars.com/api/?name=${user?.user?.first_name}+${user?.user?.last_name}`;
           }} 
         />
       </div>
