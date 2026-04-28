@@ -1,4 +1,12 @@
 import { useRef, useEffect } from "react";
+import { 
+  IoPulseOutline, 
+  IoStatsChartOutline, 
+  IoShieldCheckmarkOutline, 
+  IoPersonAddOutline, 
+  IoWarningOutline, 
+  IoReaderOutline 
+} from "react-icons/io5";
 
 /* ─────────────────────────────────────────────
    Scroll reveal
@@ -33,61 +41,69 @@ function useReveal(delay = 0) {
 const FEATURES = [
   {
     title: "Real-Time Monitoring",
-    desc:  "Sub-50ms scanning of every employee prompt before it reaches any LLM endpoint.",
-    bg:    "bg-[#89A1EF]/8",
-    border:"border-[#89A1EF]/20",
-    icon:  "text-[#89A1EF]",
+    icon: IoPulseOutline,
+    desc: "Sub-50ms scanning of every employee prompt before it reaches any LLM endpoint.",
+    bg: "bg-[#89A1EF]/8",
+    border: "border-[#89A1EF]/20",
+    color: "text-[#89A1EF]",
   },
   {
     title: "AI Usage Analytics",
-    desc:  "Granular breakdowns of tool usage, session length, query volume, and trend analysis over time.",
-    bg:    "bg-violet-50",
-    border:"border-violet-200/60",
-    icon:  "text-violet-600",
+    icon: IoStatsChartOutline,
+    desc: "Granular breakdowns of tool usage, session length, query volume, and trend analysis over time.",
+    bg: "bg-violet-50",
+    border: "border-violet-200/60",
+    color: "text-violet-600",
   },
   {
     title: "Policy Enforcement",
-    desc:  "Point-and-click rule builder to define, activate, and update compliance policies org-wide.",
-    bg:    "bg-emerald-50",
-    border:"border-emerald-200/60",
-    icon:  "text-emerald-600",
+    icon: IoShieldCheckmarkOutline,
+    desc: "Point-and-click rule builder to define, activate, and update compliance policies org-wide.",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200/60",
+    color: "text-emerald-600",
   },
   {
     title: "Account Approval System",
-    desc:  "All new AI tool registrations pass through a gated approval workflow with admin sign-off.",
-    bg:    "bg-amber-50",
-    border:"border-amber-200/60",
-    icon:  "text-amber-600",
+    icon: IoPersonAddOutline,
+    desc: "All new AI tool registrations pass through a gated approval workflow with admin sign-off.",
+    bg: "bg-amber-50",
+    border: "border-amber-200/60",
+    color: "text-amber-600",
   },
   {
     title: "Misuse Detection",
-    desc:  "Pattern-based and semantic detection flags jailbreak attempts, prompt injection, and data exfiltration.",
-    bg:    "bg-rose-50",
-    border:"border-rose-200/60",
-    icon:  "text-rose-500",
+    icon: IoWarningOutline,
+    desc: "Pattern-based and semantic detection flags jailbreak attempts, prompt injection, and data exfiltration.",
+    bg: "bg-rose-50",
+    border: "border-rose-200/60",
+    color: "text-rose-500",
   },
   {
     title: "Audit Logging",
-    desc:  "Immutable, timestamped records of every AI interaction — ready for regulatory and legal review.",
-    bg:    "bg-sky-50",
-    border:"border-sky-200/60",
-    icon:  "text-sky-600",
+    icon: IoReaderOutline,
+    desc: "Immutable, timestamped records of every AI interaction — ready for regulatory and legal review.",
+    bg: "bg-sky-50",
+    border: "border-sky-200/60",
+    color: "text-sky-600",
   },
 ];
 
 function FeatureCard({ feature, delay }) {
   const ref = useReveal(delay);
+  const Icon = feature.icon; // Extract the icon component
+
   return (
     <div
       ref={ref}
       className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm
                  hover:shadow-md hover:border-[#89A1EF]/25 transition-all duration-300 group"
     >
-      {/* ICON_PLACEHOLDER — replace with a contextual icon for each feature */}
       <div className={`w-10 h-10 rounded-xl ${feature.bg} border ${feature.border}
                        flex items-center justify-center mb-4
                        group-hover:scale-110 transition-transform`}>
-        <span className={`text-sm font-mono ${feature.icon}`}>⬡</span>
+        {/* Render the Icon component directly */}
+        <Icon className={`text-lg ${feature.color}`} />
       </div>
       <h3 className="text-sm font-bold text-gray-900 mb-2">{feature.title}</h3>
       <p className="text-xs text-gray-500 leading-relaxed">{feature.desc}</p>
