@@ -84,31 +84,39 @@ function VideoPanel({ step }) {
   return (
     <div
       className="relative bg-gray-50 border border-gray-200 rounded-3xl overflow-hidden
-                 aspect-[4/3] flex flex-col items-center justify-center gap-4
+                 aspect-[4/3] flex flex-col items-center justify-center
                  shadow-xl shadow-gray-100/80 transition-all duration-500"
     >
-      {/* VIDEO_PLACEHOLDER — see `hint` on each step for exact video spec */}
-      <div
-        className={`w-16 h-16 rounded-2xl flex items-center justify-center
-                    ${step.accent} shadow-lg`}
-      >
-        {/* ICON_PLACEHOLDER: step-specific icon */}
-        <svg className="w-7 h-7 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-          <polygon points="5,3 19,12 5,21" />
-        </svg>
+      {/* ── THE VIDEO ELEMENT ── */}
+      <video
+        key="how-it-works-video" // Use a static key so the video doesn't restart when the step changes
+        src="/video/how-it-works-video.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* ── OPTIONAL OVERLAY ── */}
+      {/* This subtle gradient makes the bottom labels easier to read over the video */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+
+      {/* Step label badge - Updated to sit on top of video */}
+      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md border border-gray-200 rounded-lg
+                      px-2.5 py-1 shadow-sm z-10">
+        <span className="text-[10px] font-bold text-gray-700 uppercase tracking-tight">
+          Live Demo · {step.number}
+        </span>
       </div>
 
-      <div className="text-center px-8">
-        <p className="text-sm font-bold text-gray-700 mb-1">
-          [VIDEO_PLACEHOLDER: {step.video}]
-        </p>
-        <p className="text-xs text-gray-400 leading-relaxed">{step.hint}</p>
-      </div>
-
-      {/* Step label badge */}
-      <div className="absolute top-4 left-4 bg-white border border-gray-200 rounded-lg
-                      px-2.5 py-1 shadow-sm">
-        <span className="text-[10px] font-bold text-gray-600">Step {step.number}</span>
+      {/* Status indicator */}
+      <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md border border-gray-200 rounded-lg
+                      px-2.5 py-1 shadow-sm z-10 flex items-center gap-2">
+        <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${step.accent}`} />
+        <span className="text-[10px] font-bold text-gray-700 tracking-tight">
+          {step.title}
+        </span>
       </div>
     </div>
   );
