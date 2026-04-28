@@ -16,7 +16,7 @@ import { WelcomeBanner } from "./dashboard-reusables/WelcomeBanner";
 
 export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav , onLaunchBot, user }) {
   // ── Fetch only THIS employee's stats ──
-  const { data: stats } = useQuery({
+  const { data: stats, isLoading } = useQuery({
     queryKey: ["employee-stats"],
     queryFn: async () => {
       const token = localStorage.getItem("token");
@@ -26,6 +26,18 @@ export default function EmployeeDashboard({ sidebarCollapsed, setActiveNav , onL
       return res.json();
     }
   });
+
+  if (isLoading) return (
+    <div className={`mt-16 transition-all duration-300 p-6 min-h-[calc(100vh-64px)] flex items-center justify-center ${sidebarCollapsed ? "ml-16" : "ml-56"}`}>
+       <div className="flex flex-col items-center gap-3">
+        {/* Using the same spinning icon as the Admin side */}
+        <SiGooglegemini className="animate-spin size-10 text-[#89A1EF]" />
+        <p className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase animate-pulse">
+          Synchronizing Sentinel Profile...
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <div className={`mt-16 transition-all duration-300 p-6 min-h-screen ${sidebarCollapsed ? "ml-16" : "ml-56"}`}>
