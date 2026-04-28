@@ -22,7 +22,8 @@ export default function Employees({ sidebarCollapsed }) {
       if (!response.ok) throw new Error("Network response was not ok");
       return response.json();
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 30, // Re-check every 30 seconds
+    refetchInterval: 1000 * 60, // Automatically refresh the list every minute
   });
 
   // ── Loading State (The Preloader) ──
