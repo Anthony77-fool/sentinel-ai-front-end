@@ -1,4 +1,10 @@
 import { useRef, useEffect } from "react";
+import { 
+  IoPulseOutline, 
+  IoBarChartOutline, 
+  IoShieldCheckmarkOutline, 
+  IoNotificationsOutline 
+} from "react-icons/io5";
 
 function useReveal(delay = 0) {
   const ref = useRef(null);
@@ -27,19 +33,23 @@ function useReveal(delay = 0) {
 const HIGHLIGHTS = [
   {
     title: "Live Activity Tracking",
-    desc:  "Heartbeat system monitors every employee session — active tool, duration, and anomaly signals.",
+    icon: IoPulseOutline,
+    desc: "Heartbeat system monitors every employee session — active tool, duration, and anomaly signals.",
   },
   {
     title: "Risk-Level Analytics",
-    desc:  "Each user gets a dynamic risk score based on violation history, frequency, and severity.",
+    icon: IoBarChartOutline,
+    desc: "Each user gets a dynamic risk score based on violation history, frequency, and severity.",
   },
   {
     title: "Policy Rule Engine",
-    desc:  "Publish, update, and roll back compliance policies across your entire organization in seconds.",
+    icon: IoShieldCheckmarkOutline,
+    desc: "Publish, update, and roll back compliance policies across your entire organization in seconds.",
   },
   {
     title: "Instant Flagging & Alerts",
-    desc:  "Critical violations surface immediately — with context, severity level, and remediation options.",
+    icon: IoNotificationsOutline,
+    desc: "Critical violations surface immediately — with context, severity level, and remediation options.",
   },
 ];
 
@@ -78,22 +88,26 @@ export default function AdminSection() {
             </p>
 
             <div ref={bodyRef} className="space-y-4">
-              {HIGHLIGHTS.map((h, i) => (
-                <div key={h.title}
-                  className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-200
-                             shadow-sm hover:border-[#89A1EF]/30 transition-colors group">
-                  {/* ICON_PLACEHOLDER */}
-                  <div className="w-9 h-9 rounded-xl bg-[#89A1EF]/10 border border-[#89A1EF]/20
-                                  flex items-center justify-center flex-shrink-0 mt-0.5
-                                  group-hover:bg-[#89A1EF]/15 transition-colors">
-                    <span className="text-[#89A1EF] text-sm font-mono">⬡</span>
+              {HIGHLIGHTS.map((h, i) => {
+                const Icon = h.icon;
+                return (
+                  <div key={h.title} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-200
+                                              shadow-sm hover:border-[#89A1EF]/30 transition-colors group">
+                    
+                    {/* UPDATE THIS DIV BELOW */}
+                    <div className="w-9 h-9 rounded-xl bg-[#89A1EF]/10 border border-[#89A1EF]/20
+                                    flex items-center justify-center flex-shrink-0 mt-0.5
+                                    group-hover:bg-[#89A1EF]/15 transition-colors">
+                      <Icon className="text-[#89A1EF] text-lg" />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-bold text-gray-900 mb-0.5">{h.title}</p>
+                      <p className="text-xs text-gray-500 leading-relaxed">{h.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-900 mb-0.5">{h.title}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{h.desc}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="mt-8 flex gap-3">
@@ -117,59 +131,20 @@ export default function AdminSection() {
 
           {/* ── Right: dashboard image placeholder ── */}
           <div ref={imgRef}>
-            <div
-              className="relative bg-white border border-gray-200 rounded-3xl overflow-hidden
-                         shadow-2xl shadow-gray-200/60 aspect-[4/3]
-                         flex flex-col items-center justify-center gap-3 p-8"
-            >
-              {/*
-                IMAGE_PLACEHOLDER: DASHBOARD PREVIEW
-                Insert a high-resolution screenshot or mockup of the SentinelAI admin
-                dashboard showing:
-                  - Left sidebar with navigation
-                  - Summary stat cards (employees, reports, usage)
-                  - A line chart for AI usage over time
-                  - A recent activity table with status badges
-                Recommended: PNG/WebP at 2x resolution (1200×900px)
-              */}
+            <div className="relative bg-white border border-gray-200 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-gray-200/60 aspect-[4/3] group">
+              
+              {/* ACTUAL IMAGE */}
+              <img 
+                src="/imgs/admin-dashboard-img.jpg" 
+                alt="SentinelAI Admin Dashboard" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
 
-              {/* Simulated mini dashboard skeleton */}
-              <div className="w-full space-y-3">
-                <div className="flex gap-2">
-                  {[1,2,3].map((n) => (
-                    <div key={n} className="flex-1 bg-[#89A1EF]/6 border border-[#89A1EF]/15
-                                            rounded-xl p-3">
-                      <div className="h-2 w-12 bg-gray-200 rounded mb-2" />
-                      <div className="h-5 w-8 bg-[#89A1EF]/30 rounded" />
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 h-24
-                                flex items-end gap-1">
-                  {[40,55,45,70,60,80,72,90,65,85].map((h, i) => (
-                    <div key={i}
-                      className="flex-1 rounded-sm bg-[#89A1EF]/40"
-                      style={{ height: `${(h / 90) * 72}px` }}
-                    />
-                  ))}
-                </div>
-                {[1,2,3].map((n) => (
-                  <div key={n} className="flex items-center gap-3 py-1.5 border-b
-                                          border-gray-100 last:border-0">
-                    <div className="w-6 h-6 rounded-full bg-[#89A1EF]/10 flex-shrink-0" />
-                    <div className="flex-1 h-2 bg-gray-100 rounded" />
-                    <div className="w-10 h-4 bg-emerald-100 rounded-full" />
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-xs text-gray-400 font-mono text-center">
-                [IMAGE_PLACEHOLDER: DASHBOARD PREVIEW]
-              </p>
+              {/* Subtle Overlay to make the badge pop */}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 to-transparent pointer-events-none" />
 
               {/* Corner badge */}
-              <div className="absolute top-3 right-3 bg-[#89A1EF] text-white text-[10px]
-                              font-bold px-2.5 py-1 rounded-lg shadow-sm">
+              <div className="absolute top-4 right-4 bg-[#89A1EF] text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-lg shadow-[#89A1EF]/30 uppercase tracking-wider">
                 Admin View
               </div>
             </div>
