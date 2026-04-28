@@ -8,6 +8,7 @@ import {
   IoReaderOutline,
   IoShieldCheckmark
 } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 /* ─────────────────────────────────────────────
    Scroll reveal
@@ -246,20 +247,20 @@ export function CTASection() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#"
+            <Link
+              to="/signup1" // Replace with your target route
               className="inline-flex items-center gap-2 bg-[#89A1EF] text-white
-                         font-bold text-sm px-8 py-4 rounded-2xl
-                         hover:bg-[#7b93e8] active:bg-[#6e86e7]
-                         transition-colors shadow-lg shadow-[#89A1EF]/20"
+                        font-bold text-sm px-8 py-4 rounded-2xl
+                        hover:bg-[#7b93e8] active:bg-[#6e86e7]
+                        transition-colors shadow-lg shadow-[#89A1EF]/20"
             >
               Get Started — Free
               <svg className="w-4 h-4" fill="none" stroke="currentColor"
-                   strokeWidth="2.5" viewBox="0 0 24 24">
+                  strokeWidth="2.5" viewBox="0 0 24 24">
                 <line x1="5" y1="12" x2="19" y2="12"/>
                 <polyline points="12,5 19,12 12,19"/>
               </svg>
-            </a>
+            </Link>
             <a
               href="#"
               className="inline-flex items-center gap-2 text-sm font-bold text-gray-700
@@ -272,7 +273,7 @@ export function CTASection() {
           </div>
 
           <p className="text-xs text-gray-400 mt-6">
-            No credit card required · 14-day free trial · Cancel anytime
+            No credit card required · All free · Accessible anytime
           </p>
         </div>
       </div>
